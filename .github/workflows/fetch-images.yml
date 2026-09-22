@@ -1,0 +1,99 @@
+name: Fetch and commit images
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download images from Wikimedia Commons
+        run: |
+          python3 << 'PYEOF'
+          import urllib.request, os, json
+
+          os.makedirs('images', exist_ok=True)
+          UA = 'travel-agent-generated-page/1.0 (https://github.com/sauliusc/travel-agent)'
+
+          files = [
+            # TODO: fill in from Image agent output below
+          # ## Image lookup results
+          # 
+          # Ran `tools/wikimedia.py` (via the project `.venv`, since `httpx` wasn't installed system-wide) against Wikimedia Commons for every distinct physical stop in the itinerary. Repeated stops at the same location (Vlorë appears 3×, TIA airport 2×, Berat/Gjirokastra castle+accommodation pairs) are deduped to one lookup/image each.
+          # 
+          # | Itinerary stop(s) | Local filename | Commons file title | Thumbnail URL (≥640px) | License |
+          # |---|---|---|---|---|
+          # | TIA airport (Day 1 arrival, Day 4 departure) | `images/tirana-airport.jpg` | `File:Tirana Airport Cargo Center (OSCAL19 trip).jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Tirana_Airport_Cargo_Center_%28OSCAL19_trip%29.jpg/960px-Tirana_Airport_Cargo_Center_%28OSCAL19_trip%29.jpg | CC0 |
+          # | KRIS Guesthouse / Kalaja e Beratit (Berat castle) | `images/berat-castle.jpg` | `File:Berat Castle (by Pudelek) 2.JPG` | https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Berat_Castle_%28by_Pudelek%29_2.JPG/960px-Berat_Castle_%28by_Pudelek%29_2.JPG | CC BY-SA 4.0 |
+          # | Kalaja e Gjirokastrës (Gjirokastra castle, both Day 2/3 mentions) | `images/gjirokaster-castle.jpg` | `File:Gjirokastër Castle (by Pudelek) 3.jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Gjirokast%C3%ABr_Castle_%28by_Pudelek%29_3.jpg/960px-Gjirokast%C3%ABr_Castle_%28by_Pudelek%29_3.jpg | CC BY-SA 4.0 |
+          # | Hotel Gjirokastra (senamiestis) | `images/gjirokaster-old-town.jpg` | `File:Gjirokastra - Straße mit altem Hotel.jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Gjirokastra_-_Stra%C3%9Fe_mit_altem_Hotel.jpg/960px-Gjirokastra_-_Stra%C3%9Fe_mit_altem_Hotel.jpg | CC BY-SA 3.0 |
+          # | Vlorė (Sheshi i Flamurit, Lungomare, return-to-nakvynė — all 3 mentions) | `images/vlore.jpg` | `File:Vlorë, Albania December 2022 - Olympia.jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Vlor%C3%AB%2C_Albania_December_2022_-_Olympia.jpg/960px-Vlor%C3%AB%2C_Albania_December_2022_-_Olympia.jpg | CC BY 2.0 |
+          # | Zvërnec sala (lagūnos vienuolynas) | `images/zvernec-island.jpg` | `File:Monastery of Zvërnec, Albania.jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Monastery_of_Zv%C3%ABrnec%2C_Albania.jpg/960px-Monastery_of_Zv%C3%ABrnec%2C_Albania.jpg | CC BY-SA 3.0 |
+          # | Kaninës pilis (apžvalgos aikštelė) | `images/kanine-fortress.jpg` | `File:Vlora as seen from the ruins of Kanina Fortress.jpg` | https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Vlora_as_seen_from_the_ruins_of_Kanina_Fortress.jpg/960px-Vlora_as_seen_from_the_ruins_of_Kanina_Fortress.jpg | CC BY-SA 4.0 |
+          # 
+          # **Skipped (no usable Commons image found):**
+          # - Restoranas Onufri (Berat) — no result
+          # - Restoranas Kujtimi (Gjirokastra bazaras) — no result
+          # - Kuzum Baba Restaurant (Vlorë) — no result
+          # - KRIS Guesthouse itself has no dedicated photo — reuses the Berat Castle image since the guesthouse sits inside the castle grounds
+          # 
+          # **Note on Kaninë Castle:** the first search for "Kaninë Castle, Albania" only turned up a 2007 postage-stamp illustration (public domain, but an unscaled small graphic, not a real photo) — rejected in favor of the actual bay-view photograph found above.
+          # 
+          # ## `fetch-images.yml` generator input
+          # 
+          # Drop this into the `files = [...]` list in `templates/fetch-images.yml` (replacing `# IMAGES_PLACEHOLDER`):
+          # 
+          # ```python
+          # files = [
+          #     ('images/tirana-airport.jpg', 'Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg'),
+          #     ('images/berat-castle.jpg', 'Berat_Castle_(by_Pudelek)_2.JPG'),
+          #     ('images/gjirokaster-castle.jpg', 'Gjirokastër_Castle_(by_Pudelek)_3.jpg'),
+          #     ('images/gjirokaster-old-town.jpg', 'Gjirokastra_-_Straße_mit_altem_Hotel.jpg'),
+          #     ('images/vlore.jpg', 'Vlorë,_Albania_December_2022_-_Olympia.jpg'),
+          #     ('images/zvernec-island.jpg', 'Monastery_of_Zvërnec,_Albania.jpg'),
+          #     ('images/kanine-fortress.jpg', 'Vlora_as_seen_from_the_ruins_of_Kanina_Fortress.jpg'),
+          # ]
+          # ```
+          # 
+          # 7 images resolved, 3 restaurant stops skipped (no Commons coverage) and reused across duplicate-location stops (Vlorë ×3, TIA ×2, Berat/Gjirokastra castle pairs).
+          ]
+
+          ok = 0
+          for local_path, fname in files:
+            api = f'https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&iiurlwidth=640&titles=File:{fname}&format=json'
+            try:
+              req = urllib.request.Request(api, headers={'User-Agent': UA})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                data = json.loads(r.read())
+              pages = data['query']['pages']
+              thumb_url = next(iter(pages.values()))['imageinfo'][0]['thumburl']
+              req2 = urllib.request.Request(thumb_url, headers={'User-Agent': UA, 'Referer': 'https://commons.wikimedia.org/'})
+              with urllib.request.urlopen(req2, timeout=30) as r2, open(local_path, 'wb') as f:
+                content = r2.read()
+                f.write(content)
+              print(f'OK {local_path} ({len(content):,} bytes)')
+              ok += 1
+            except Exception as e:
+              print(f'FAIL {local_path}: {e}')
+
+          print(f'Done: {ok}/{len(files)} images')
+          PYEOF
+
+      - name: Commit images to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: atnaujinti nuotraukas iš Wikimedia Commons"
+            git push origin main
+          fi
