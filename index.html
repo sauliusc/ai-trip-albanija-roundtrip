@@ -1,0 +1,667 @@
+```html
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Albanija · 4 dienų kelionė</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  :root{
+    --accent: #c1440e;
+    --accent-dark: #8a3008;
+    --accent-light: #fbe4d8;
+    --warn-bg: #fff4e0;
+    --warn-border: #e0a52c;
+    --warn-text: #6b4a05;
+    --ink: #2b201c;
+    --muted: #6b5f5b;
+    --bg: #faf7f5;
+    --card: #ffffff;
+    --radius: 12px;
+    font-size: 16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height:1.5;
+  }
+  header.hero{
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color:#fff;
+    padding: 2.2rem 1.2rem 2.6rem;
+    text-align:center;
+  }
+  header.hero h1{
+    margin:0 0 .3rem;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    letter-spacing: -0.01em;
+  }
+  header.hero p{
+    margin:0;
+    opacity:.92;
+    font-size: 1rem;
+  }
+  .container{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .alert{
+    margin: -1.6rem auto 1.5rem;
+    max-width: 860px;
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    color: var(--warn-text);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+    position:relative;
+    z-index:2;
+  }
+  .alert h2{
+    margin:0 0 .5rem;
+    font-size: 1rem;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .alert h2::before{
+    content: "⚠️";
+    font-size: 1.1rem;
+  }
+  .alert ul{
+    margin:.3rem 0 0;
+    padding-left: 1.2rem;
+  }
+  .alert li{ margin-bottom:.4rem; }
+  .alert li:last-child{ margin-bottom:0; }
+  .alert .resolved{
+    margin-top: .9rem;
+    padding-top: .8rem;
+    border-top: 1px dashed var(--warn-border);
+    font-size: .88rem;
+    opacity: .9;
+  }
+  .alert .resolved strong{ display:block; margin-bottom:.3rem; }
+  section.day{
+    background: var(--card);
+    border-radius: var(--radius);
+    margin: 1.2rem 0;
+    padding: 1.2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  }
+  section.day h2{
+    margin: 0 0 .2rem;
+    font-size: 1.25rem;
+    color: var(--accent-dark);
+    display:flex;
+    align-items:baseline;
+    gap:.5rem;
+    flex-wrap:wrap;
+  }
+  section.day h2 .day-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: var(--accent);
+    color:#fff;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius:50%;
+    font-size:.95rem;
+    flex-shrink:0;
+  }
+  section.day .meta{
+    color: var(--muted);
+    font-size:.85rem;
+    margin-bottom: .9rem;
+  }
+  .stop{
+    display:grid;
+    grid-template-columns: 78px 1fr;
+    gap: .8rem;
+    padding: .7rem 0;
+    border-top: 1px dashed #e8ddd7;
+  }
+  .stop:first-of-type{ border-top:none; }
+  .stop-time{
+    font-weight:600;
+    font-size:.82rem;
+    color: var(--accent-dark);
+    white-space:nowrap;
+  }
+  .stop-time small{
+    display:block;
+    color: var(--muted);
+    font-weight:400;
+  }
+  .stop-body h3{
+    margin:0 0 .25rem;
+    font-size:1rem;
+  }
+  .stop-body p{
+    margin:.15rem 0;
+    font-size:.9rem;
+    color:#3d332f;
+  }
+  .stop-body a.gmaps{
+    font-size:.8rem;
+    color: var(--accent-dark);
+    text-decoration:none;
+    font-weight:600;
+  }
+  .stop-body a.gmaps:hover{ text-decoration:underline; }
+  .spot-thumb{
+    display:block;
+    width:100%;
+    max-width:220px;
+    border-radius: 8px;
+    margin: .5rem 0 .3rem;
+    cursor: zoom-in;
+    transition: transform .15s ease;
+  }
+  .spot-thumb:hover{ transform: scale(1.02); }
+  #map{
+    height: 420px;
+    width:100%;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    margin: 1.2rem 0 .8rem;
+  }
+  .map-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap: .6rem 1.1rem;
+    margin: 0 0 1.2rem;
+    font-size:.82rem;
+    color: var(--muted);
+  }
+  .map-legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+  }
+  .map-legend i{
+    width:.7rem;
+    height:.7rem;
+    border-radius:50%;
+    display:inline-block;
+  }
+  h2.section-title{
+    color: var(--accent-dark);
+    font-size:1.3rem;
+    margin: 1.6rem 0 .6rem;
+  }
+  .info-card{
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    margin: 1.2rem 0 2rem;
+  }
+  .info-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: .9rem;
+  }
+  @media (min-width: 560px){
+    .info-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  .info-item{
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: .8rem .9rem;
+  }
+  .info-item .label{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color: var(--accent-dark);
+    font-weight:700;
+    margin-bottom:.25rem;
+  }
+  .info-item .value{
+    font-size:.95rem;
+    color: var(--ink);
+  }
+  .info-item .value .placeholder{
+    color: var(--muted);
+    font-style: italic;
+  }
+  footer{
+    text-align:center;
+    color: var(--muted);
+    font-size:.8rem;
+    padding: 1.5rem 1rem 2.5rem;
+  }
+  /* Lightbox */
+  #lightbox{
+    position:fixed;
+    inset:0;
+    background: rgba(20,10,5,.92);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 1000;
+    padding: 1.5rem;
+  }
+  #lightbox.open{ display:flex; }
+  #lightbox img{
+    max-width:100%;
+    max-height:100%;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5);
+  }
+  #lightbox .close-hint{
+    position:absolute;
+    top: 1rem;
+    right: 1.2rem;
+    color:#fff;
+    font-size: 1.8rem;
+    cursor:pointer;
+    line-height:1;
+    opacity:.85;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Albanija · 4 dienų kelionė</h1>
+  <p>Tirana → Beratas → Gjirokastra → Vlorė → Tirana</p>
+</header>
+
+<div class="container">
+
+  <div class="alert">
+    <h2>Logistikos pastabos</h2>
+    <ul>
+      <li><strong>Overpass patikra vis dar neatlikta (HARD FAIL, blokuoja publikavimą).</strong> Pakartotinai
+        bandyta pasiekti Overpass API tiesiogiai 2026-09-22 — serveris grąžina HTTP 406 visoms užklausoms
+        (patikrinta ir <code>httpx</code>, ir <code>curl</code>), t.y. tai vis dar realus tinklo apribojimas,
+        ne pasenusi pastaba. Kelio dangos (<code>highway=track</code>) patikra nė vienam iš 6 atkarpų
+        neatlikta. Nominatim atvirkštinis geokodavimas <strong>nėra</strong> šios patikros pakaitalas — jis
+        patvirtina tik vietovės pavadinimą/adresą prie koordinatės, o ne kelio dangos tipą. Tai lieka
+        blokuojanti problema, kol Overpass patikra realiai nepaleidžiama.</li>
+      <li><strong>Dvi važiavimo laiko klaidos rastos ir ištaisytos pakartotinai patikrinus OSRM tiesiogiai
+        (2026-09-22):</strong> TIA→Beratas buvo klaidingai 2 val. 16 min (turi būti 1 val. 58 min — puslapis
+        atnaujintas); Gjirokastra→Vlora buvo klaidingai 2 val. 25 min (turi būti 1 val. 59 min — puslapis
+        atnaujintas). Ankstesnė 121 min figūra Itinerary handoff užraše buvo artima, bet puslapio 145 min
+        įrašas — ne. Abi atkarpos yra žemumų/pakrantės keliai, kalnų korekcijos koeficientas netaikytas.</li>
+      <li><strong>4 val./dienai važiavimo limitas</strong> nėra užfiksuotas jokiame formaliame reikalavimų
+        dokumente šiame projekte — planas jį perėmė iš ankstesnio juodraščio. Rekomenduojama patvirtinti
+        su Requirements Analyst agento išvestimi, jei tokia yra.</li>
+      <li><strong>4-os dienos rezervas prieš skrydį — 2 val. 38 min</strong> (atvykimas į TIA 16:27,
+        skrydis 19:05). Ankstesnis teiginys, kad šis rezervas buvo pagerintas iki 2 val. 57 min, buvo
+        klaidingas ir niekada nebuvo pritaikytas puslapyje — 2 val. 38 min yra teisinga, faktinė reikšmė.
+        Ji viršija Logistikos validatoriaus 2 val. minimumą, bet tai diena su didžiausiu važiavimo laiko
+        krūviu (~2 val. 47 min kelyje) — stebėti eismo sąlygas Vlorė→TIA ruože kelionės dieną.</li>
+    </ul>
+    <div class="resolved">
+      <strong>Jau išspręsta:</strong>
+      2 dienos „Hotel Gjirokastra“ Google Maps nuoroda rodė klaidingas koordinates (Berato restorano
+      koordinates, ~100 km nuo Gjirokastros) — ištaisyta į 40.0731637, 20.1375930, atitinka
+      <code>stopsGeoJSON</code> įrašą. Beratas→Gjirokastra maršruto taškai priklauso SH4/SH75 koridoriui
+      (Tepelenė), <em>ne</em> SH74/Osum bekelei — patvirtinta Nominatim atvirkštinio geokodavimo įrodymais;
+      tačiau tai vietovės, ne kelio dangos, patikra (žr. Overpass punktą aukščiau). Kaninës pilies
+      koordinatė, kurią Critic pažymėjo kaip „reikia patikrinti“, nepriklausomai patvirtinta teisinga.
+    </div>
+  </div>
+
+  <!-- DAY 1 -->
+  <section class="day" id="day-1">
+    <h2><span class="day-num">1</span> Atvykimas į Tiraną, kelionė į Beratą</h2>
+    <div class="meta">Važiavimas: ~1 val. 58 min · Nakvynė: Beratas</div>
+
+    <div class="stop">
+      <div class="stop-time">20:30<small>21:15</small></div>
+      <div class="stop-body">
+        <h3>Tiranos tarptautinis oro uostas „Nënë Tereza“ (TIA)</h3>
+        <img class="spot-thumb" src="images/tirana-airport.jpg" alt="Tiranos oro uostas" loading="lazy">
+        <p>Skrydis nusileidžia 20:30. ~45 min automobilio nuomos formalumams.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=41.4140247,19.7196495" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">23:13<small>09:00</small></div>
+      <div class="stop-body">
+        <h3>KRIS Guesthouse (Kalaja e Beratit / Berat pilis)</h3>
+        <img class="spot-thumb" src="images/berat-castle.jpg" alt="Berat pilis" loading="lazy">
+        <p>TIA→Beratas: 121 km, 1 val. 58 min (OSRM, pakartotinai patikrinta tiesiogiai — ankstesnis
+          2 val. 16 min įrašas buvo klaidingas, o šis ruožas eina pagrindiniu žemumų greitkeliu, ne
+          kalnų tarpekliu, todėl kalnų korekcijos koeficientas netaikomas). Svečių namai pačioje
+          pilies teritorijoje.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.7094334,19.9443111" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day" id="day-2">
+    <h2><span class="day-num">2</span> Beratas → Gjirokastra</h2>
+    <div class="meta">Važiavimas: ~3 val. 33 min · Nakvynė: Gjirokastra</div>
+
+    <div class="stop">
+      <div class="stop-time">09:00<small>13:00</small></div>
+      <div class="stop-body">
+        <h3>Kalaja e Beratit (Berat pilis ir senamiestis)</h3>
+        <img class="spot-thumb" src="images/berat-castle.jpg" alt="Berat pilis ir senamiestis" loading="lazy">
+        <p>„Tūkstančio langų miestas“ — Mangalem ir Gorica kvartalai, vaizdai į Tomorr kalną.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.7080730,19.9455322" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">13:00<small>14:00</small></div>
+      <div class="stop-body">
+        <h3>Restoranas Onufri (pietūs, Beratas)</h3>
+        <p>Fiksuota pietų vieta senamiestyje.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.7097504,19.9456284" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">17:33<small>09:00</small></div>
+      <div class="stop-body">
+        <h3>Hotel Gjirokastra (senamiestis)</h3>
+        <img class="spot-thumb" src="images/gjirokaster-old-town.jpg" alt="Gjirokastros senamiestis" loading="lazy">
+        <p>Beratas→Gjirokastra ≈ 3 val. 33 min, per Tepelenę (SH4/SH75 trunk kelias per tarpeklį) —
+          <strong>ne per SH74/Osum bekelę</strong>. Nominatim atvirkštinis geokodavimas patvirtina, kad
+          maršruto taškai priklauso SH4/SH75 koridoriui, bet tai <em>nėra</em> kelio dangos (highway=track)
+          patikra — ta lieka neatlikta, žr. įspėjimą viršuje. Vakaras laisvas, turgus ir pilis 5 min pėsčiomis.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.0731637,20.1375930" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day" id="day-3">
+    <h2><span class="day-num">3</span> Gjirokastra → Vlora, stotelė Zvërnec saloje</h2>
+    <div class="meta">Važiavimas: ~2 val. 34 min · Nakvynė: Vlorė</div>
+
+    <div class="stop">
+      <div class="stop-time">09:00<small>13:00</small></div>
+      <div class="stop-body">
+        <h3>Kalaja e Gjirokastrës (Gjirokastros pilis ir senamiestis)</h3>
+        <img class="spot-thumb" src="images/gjirokaster-castle.jpg" alt="Gjirokastros pilis" loading="lazy">
+        <p>UNESCO senamiestis, turgus, pilis-muziejus.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.0732316,20.1400082" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">13:00<small>14:00</small></div>
+      <div class="stop-body">
+        <h3>Restoranas Kujtimi (pietūs, Gjirokastros bazaras)</h3>
+        <p>Fiksuota pietų vieta bazare.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.0747480,20.1386018" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">15:59<small>16:14</small></div>
+      <div class="stop-body">
+        <h3>Vlorė (Sheshi i Flamurit)</h3>
+        <img class="spot-thumb" src="images/vlore.jpg" alt="Vlorė" loading="lazy">
+        <p>Gjirokastra→Vlora: 123 km, 1 val. 59 min (OSRM, pakartotinai patikrinta tiesiogiai — ankstesnis
+          2 val. 25 min įrašas buvo klaidingas; žemumų/pakrantės kelias, kalnų korekcija netaikoma).
+          Trumpas sustojimas nusimesti daiktus prieš Zvërnec salą.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">16:31<small>17:19</small></div>
+      <div class="stop-body">
+        <h3>Zvërnec sala (lagūnos vienuolynas)</h3>
+        <img class="spot-thumb" src="images/zvernec-island.jpg" alt="Zvërnec sala" loading="lazy">
+        <p>~17 min nuo Vlorės, lygumos kelias be korekcijos. Pakeičia Syri i Kaltër ir Llogaros perėją,
+          kurios viršijo 4 val./d. važiavimo limitą.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.5175527,19.4013143" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">17:37<small>09:00</small></div>
+      <div class="stop-body">
+        <h3>Vlorė (grįžimas į nakvynę)</h3>
+        <p>Vakaras laisvas — Lungomare pakrantės promenada, vakarienė.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 4 -->
+  <section class="day" id="day-4">
+    <h2><span class="day-num">4</span> Vlora → Oro uostas (grįžtamasis skrydis)</h2>
+    <div class="meta">Važiavimas: ~2 val. 47 min · Skrydis atgal iš TIA 19:05</div>
+
+    <div class="stop">
+      <div class="stop-time">09:10<small>10:30</small></div>
+      <div class="stop-body">
+        <h3>Kaninës pilis (apžvalgos aikštelė virš Vlorės įlankos)</h3>
+        <img class="spot-thumb" src="images/kanine-fortress.jpg" alt="Kaninës pilis, vaizdas į Vlorės įlanką" loading="lazy">
+        <p>~10 min nuo Vlorės. Panorama į įlanką ir miestą — koordinatė nepriklausomai patvirtinta
+          Nominatim geokodavimu.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.4446755,19.5222484" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">10:40<small>13:00</small></div>
+      <div class="stop-body">
+        <h3>Vlorė (Lungomare, laisvas laikas)</h3>
+        <img class="spot-thumb" src="images/vlore.jpg" alt="Vlorės pakrantė" loading="lazy">
+        <p>Pakrantės promenada, laisvas laikas iki pietų.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">13:00<small>14:00</small></div>
+      <div class="stop-body">
+        <h3>Kuzum Baba Restaurant (pietūs, Vlorė)</h3>
+        <p>Fiksuota pietų vieta, arti pakrantės.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=40.4674116,19.4929112" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">16:27<small>19:05</small></div>
+      <div class="stop-body">
+        <h3>Tiranos tarptautinis oro uostas „Nënë Tereza“ (TIA)</h3>
+        <img class="spot-thumb" src="images/tirana-airport.jpg" alt="Tiranos oro uostas" loading="lazy">
+        <p>Vlora→TIA (OSRM, tikras užklausos laikas). Atvykus 16:27 lieka 2 val. 38 min iki 19:05 skrydžio —
+          virš Logistikos validatoriaus 2 val. minimumo, bet tai dienos su didžiausiu spūsčių rizikos
+          rezervu ruožas.</p>
+        <a class="gmaps" href="https://www.google.com/maps/search/?api=1&query=41.4140247,19.7196495" target="_blank" rel="noopener">Google Maps ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="section-title">Žemėlapis</h2>
+  <div id="map"></div>
+  <div class="map-legend">
+    <span><i style="background:#e6194b"></i>1 diena · Tirana → Beratas</span>
+    <span><i style="background:#3cb44b"></i>2 diena · Beratas → Gjirokastra</span>
+    <span><i style="background:#4363d8"></i>3 diena · Gjirokastra → Vlorė → Zvërnec</span>
+    <span><i style="background:#f58231"></i>4 diena · Vlorė → Kaninë → TIA</span>
+  </div>
+
+  <h2 class="section-title">Praktinė informacija</h2>
+  <div class="info-card">
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Automobilio grąžinimas</div>
+        <div class="value">TIA, iki 17:30 (4 diena) — ~90 min prieš 19:05 skrydį</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Grįžtamasis skrydis</div>
+        <div class="value">TIA → namai, išvykimas 19:05</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Automobilio nuomos kontaktas</div>
+        <div class="value"><span class="placeholder">[nuomos bendrovė / tel. numeris]</span></div>
+      </div>
+      <div class="info-item">
+        <div class="label">Nakvynių kontaktai</div>
+        <div class="value"><span class="placeholder">[KRIS Guesthouse / Hotel Gjirokastra / Vlorė apgyvendinimas — tel.]</span></div>
+      </div>
+      <div class="info-item">
+        <div class="label">Skubios pagalbos numeris (Albanija)</div>
+        <div class="value">112 (bendras pagalbos numeris)</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Ambasada / konsulinė pagalba</div>
+        <div class="value"><span class="placeholder">[ambasados kontaktas]</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Sugeneruota agentine kelionių planavimo sistema · <!-- BUILD_TIME -->
+  </footer>
+</div>
+
+<div id="lightbox">
+  <span class="close-hint">&times;</span>
+  <img src="" alt="">
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // ---- Day color palette (cycles every 6 days) ----
+  const DAY_COLORS = ["#e6194b", "#3cb44b", "#4363d8", "#f58231", "#911eb4", "#42d4f4"];
+
+  // ---- Stop markers (GeoJSON FeatureCollection of Points) ----
+  const stopsGeoJSON = {
+    "type": "FeatureCollection",
+    "features": [
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.7196495, 41.4140247] },
+        "properties": { "day": 1, "order": 1, "name": "Tiranos tarptautinis oro uostas „Nënë Tereza“ (TIA)", "arrive": "20:30", "depart": "21:15", "color": "#e6194b", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=41.4140247,19.7196495" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.9443111, 40.7094334] },
+        "properties": { "day": 1, "order": 2, "name": "KRIS Guesthouse (Kalaja e Beratit / Berat pilis)", "arrive": "23:13", "depart": "09:00", "color": "#e6194b", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.7094334,19.9443111" } },
+
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.9455322, 40.7080730] },
+        "properties": { "day": 2, "order": 1, "name": "Kalaja e Beratit (Berat pilis ir senamiestis)", "arrive": "09:00", "depart": "13:00", "color": "#3cb44b", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.7080730,19.9455322" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.9456284, 40.7097504] },
+        "properties": { "day": 2, "order": 2, "name": "Restoranas Onufri (pietūs, Beratas)", "arrive": "13:00", "depart": "14:00", "color": "#3cb44b", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.7097504,19.9456284" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [20.1375930, 40.0731637] },
+        "properties": { "day": 2, "order": 3, "name": "Hotel Gjirokastra (senamiestis)", "arrive": "17:33", "depart": "09:00", "color": "#3cb44b", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.0731637,20.1375930" } },
+
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [20.1400082, 40.0732316] },
+        "properties": { "day": 3, "order": 1, "name": "Kalaja e Gjirokastrës (Gjirokastros pilis ir senamiestis)", "arrive": "09:00", "depart": "13:00", "color": "#4363d8", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.0732316,20.1400082" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [20.1386018, 40.0747480] },
+        "properties": { "day": 3, "order": 2, "name": "Restoranas Kujtimi (pietūs, Gjirokastros bazaras)", "arrive": "13:00", "depart": "14:00", "color": "#4363d8", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.0747480,20.1386018" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.4918128, 40.4708576] },
+        "properties": { "day": 3, "order": 3, "name": "Vlorė (Sheshi i Flamurit)", "arrive": "15:59", "depart": "16:14", "color": "#4363d8", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.4013143, 40.5175527] },
+        "properties": { "day": 3, "order": 4, "name": "Zvërnec sala (lagūnos vienuolynas)", "arrive": "16:31", "depart": "17:19", "color": "#4363d8", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.5175527,19.4013143" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.4918128, 40.4708576] },
+        "properties": { "day": 3, "order": 5, "name": "Vlorė (grįžimas į nakvynę)", "arrive": "17:37", "depart": "09:00", "color": "#4363d8", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" } },
+
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.5222484, 40.4446755] },
+        "properties": { "day": 4, "order": 1, "name": "Kaninës pilis (apžvalgos aikštelė virš Vlorės įlankos)", "arrive": "09:10", "depart": "10:30", "color": "#f58231", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.4446755,19.5222484" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.4918128, 40.4708576] },
+        "properties": { "day": 4, "order": 2, "name": "Vlorė (Lungomare, laisvas laikas)", "arrive": "10:40", "depart": "13:00", "color": "#f58231", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.4708576,19.4918128" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.4929112, 40.4674116] },
+        "properties": { "day": 4, "order": 3, "name": "Kuzum Baba Restaurant (pietūs, Vlorė)", "arrive": "13:00", "depart": "14:00", "color": "#f58231", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=40.4674116,19.4929112" } },
+      { "type": "Feature", "geometry": { "type": "Point", "coordinates": [19.7196495, 41.4140247] },
+        "properties": { "day": 4, "order": 4, "name": "Tiranos tarptautinis oro uostas „Nënë Tereza“ (TIA)", "arrive": "16:27", "depart": "19:05", "color": "#f58231", "google_maps_url": "https://www.google.com/maps/search/?api=1&query=41.4140247,19.7196495" } }
+    ]
+  };
+
+  // ---- Per-day dashed route lines (GeoJSON FeatureCollection of LineStrings, visit order) ----
+  const dayRoutesGeoJSON = {
+    "type": "FeatureCollection",
+    "features": [
+      { "type": "Feature", "properties": { "day": 1, "color": "#e6194b", "dashArray": "8, 8", "weight": 3 },
+        "geometry": { "type": "LineString", "coordinates": [
+          [19.7196495, 41.4140247],
+          [19.9443111, 40.7094334]
+        ] } },
+      { "type": "Feature", "properties": { "day": 2, "color": "#3cb44b", "dashArray": "8, 8", "weight": 3 },
+        "geometry": { "type": "LineString", "coordinates": [
+          [19.9455322, 40.7080730],
+          [19.9456284, 40.7097504],
+          [20.1375930, 40.0731637]
+        ] } },
+      { "type": "Feature", "properties": { "day": 3, "color": "#4363d8", "dashArray": "8, 8", "weight": 3 },
+        "geometry": { "type": "LineString", "coordinates": [
+          [20.1400082, 40.0732316],
+          [20.1386018, 40.0747480],
+          [19.4918128, 40.4708576],
+          [19.4013143, 40.5175527],
+          [19.4918128, 40.4708576]
+        ] } },
+      { "type": "Feature", "properties": { "day": 4, "color": "#f58231", "dashArray": "8, 8", "weight": 3 },
+        "geometry": { "type": "LineString", "coordinates": [
+          [19.5222484, 40.4446755],
+          [19.4918128, 40.4708576],
+          [19.4929112, 40.4674116],
+          [19.7196495, 41.4140247]
+        ] } }
+    ]
+  };
+
+  // ---- Bounds (preferred over static zoom) ----
+  const mapBounds = [
+    [40.0731637, 19.4013143],
+    [41.4140247, 20.1400082]
+  ];
+
+  const map = L.map('map');
+  map.fitBounds(mapBounds, { padding: [50, 50], maxZoom: 12 });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  L.geoJSON(dayRoutesGeoJSON, {
+    style: (f) => ({ color: f.properties.color, dashArray: f.properties.dashArray, weight: f.properties.weight })
+  }).addTo(map);
+
+  L.geoJSON(stopsGeoJSON, {
+    pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+      radius: 7, fillColor: f.properties.color, color: '#fff', weight: 2, fillOpacity: 1
+    }).bindPopup(
+      `<b>${f.properties.name}</b><br>${f.properties.day} diena · ${f.properties.arrive}–${f.properties.depart}` +
+      `<br><a href="${f.properties.google_maps_url}" target="_blank" rel="noopener">Google Maps ↗</a>`
+    )
+  }).addTo(map);
+
+  // ---- Lightbox (pure CSS + JS, no library) ----
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = lightbox.querySelector('img');
+
+  document.querySelectorAll('.spot-thumb').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('open');
+    });
+  });
+
+  lightbox.addEventListener('click', () => {
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    }
+  });
+</script>
+</body>
+</html>
+```
