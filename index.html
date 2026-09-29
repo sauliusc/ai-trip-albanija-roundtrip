@@ -1,10 +1,614 @@
-I regenerated `index.html` from the supplied itinerary, logistics, budget, map, and image data (there was a stale draft already in the working tree, untracked — I overwrote it with content matching the actual input for this run).
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Albanija 2026 — Tirana, Beratas, Gjirokastra</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root {
+    --accent: #b8452f;
+    --accent-dark: #8a3120;
+    --accent-light: #f0d9c8;
+    --gold: #c99a2e;
+    --bg: #faf6f1;
+    --card-bg: #ffffff;
+    --text: #2b2320;
+    --muted: #6b5e56;
+    --border: #e7dccf;
+    --radius: 14px;
+    --day1: #e6194B;
+    --day2: #3cb44b;
+    --day3: #4363d8;
+    --day4: #f58231;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header.hero {
+    background: linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    padding: 2.2rem 1.2rem 2rem;
+    text-align: center;
+  }
+  header.hero h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.7rem;
+    letter-spacing: 0.02em;
+  }
+  header.hero .dates {
+    font-size: 1rem;
+    opacity: 0.95;
+  }
+  header.hero .tagline {
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.92;
+  }
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 1rem 1rem 3rem;
+  }
+  section {
+    margin-top: 2rem;
+  }
+  h2.section-title {
+    font-size: 1.3rem;
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+  }
+  .day-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .day-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+  .stop {
+    display: flex;
+    gap: 0.8rem;
+    padding: 0.8rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .stop:first-child { border-top: none; }
+  .stop-time {
+    flex-shrink: 0;
+    min-width: 4.6rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    font-size: 0.92rem;
+    padding-top: 0.1rem;
+  }
+  .stop-body { flex: 1; min-width: 0; }
+  .stop-name {
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+  }
+  .stop-name a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--muted);
+  }
+  .stop-notes {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin: 0.2rem 0 0;
+  }
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.3rem 0 0.3rem 4.6rem;
+    padding: 0.35rem 0.7rem;
+    background: var(--accent-light);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    color: var(--accent-dark);
+    width: fit-content;
+  }
+  .leg::before { content: "🚗"; font-size: 0.9rem; }
+  .spot-thumb {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 10px;
+    margin-top: 0.6rem;
+    cursor: zoom-in;
+    border: 1px solid var(--border);
+  }
+  .credit {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .credit a { color: var(--muted); }
+  #trip-map {
+    height: 380px;
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .tips {
+    background: #fff6e5;
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+  .tips h2.section-title { border-bottom: none; margin-bottom: 0.6rem; padding-bottom: 0; }
+  .tips ul { margin: 0; padding-left: 1.2rem; }
+  .tips li { margin-bottom: 0.6rem; font-size: 0.94rem; }
+  .tips li:last-child { margin-bottom: 0; }
+  table.budget {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  table.budget th, table.budget td {
+    padding: 0.55rem 0.6rem;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  table.budget th:first-child, table.budget td:first-child { text-align: left; }
+  table.budget thead th {
+    background: var(--accent-light);
+    color: var(--accent-dark);
+  }
+  table.budget tr.total td {
+    font-weight: 700;
+    border-top: 2px solid var(--accent);
+    border-bottom: none;
+  }
+  .budget-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .info-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 0.8rem;
+  }
+  .info-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+  .info-item .value {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    padding: 1.5rem 1rem 2rem;
+  }
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 12, 8, 0.92);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    cursor: zoom-out;
+  }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-overlay img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+  @media (max-width: 480px) {
+    .leg { margin-left: 0; }
+    .info-grid { grid-template-columns: 1fr; }
+    header.hero h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
 
-Key fixes versus the old draft:
-- Filled in the missing Osumo kanjonas → Bogovė driving leg (6 km / 20 min) that had been dropped entirely.
-- Corrected distances/times on several legs (e.g. Bogovė → Beratas is 22 km/40 min, not 23/44) and replaced OSM jargon ("SH1/SH4 tipo trunk/primary") with plain wording.
-- Reconciled stop arrival times with the provided itinerary (e.g. Beratas nakvynė arrives 14:50, not 14:55).
-- Rebuilt the budget table and the three traveler tips straight from `logistics.traveler_tips`, with no mention of agents/tools/validation status.
-- Left "Viešbutis prie oro uosto" without a photo since no image entry exists for it, per the image list.
+<header class="hero">
+  <h1>Albanija: Tirana → Beratas → Gjirokastra</h1>
+  <div class="dates">2026-10-30 (penktadienis) – 2026-11-02 (pirmadienis) · 4 keliautojai</div>
+  <p class="tagline">Keturių dienų kelionė nuomotu automobiliu per pietų Albaniją: naktis prie Tiranos oro uosto, Berato „tūkstančio langų“ senamiestis ir Osumo kanjonas, UNESCO Gjirokastros pilis ir bazaras, grįžtant – sustojimas Fieryje.</p>
+</header>
 
-The file is self-contained (inline CSS/JS, Leaflet map from `map_data`, CSS+JS lightbox, `<!-- BUILD_TIME -->` placeholder) and unstaged — let me know if you'd like it committed.
+<main>
+
+<section id="map-section">
+  <h2 class="section-title">Maršrutas žemėlapyje</h2>
+  <div id="trip-map"></div>
+</section>
+
+<section class="tips">
+  <h2 class="section-title">Svarbu žinoti prieš kelią</h2>
+  <ul>
+    <li><strong>Osumo kanjonas → Bogovė:</strong> nesukite į tiesų kelią per patį kanjoną – tai žvyrkelis su akmenimis, netinkamas nuomojamam automobiliui, net jei navigacija siūlo jį kaip trumpiausią. Grįžkite tuo pačiu asfaltuotu keliu iki Berat–Čorovodė trasos (SH72) ir ja važiuokite į Bogovę.</li>
+    <li><strong>Bogovės kaimelis:</strong> stovi prie asfaltuoto kelio, bet paskutiniai keli šimtai metrų į kaimo gilumą gali būti neasfaltuoti. Sausu oru pravažiuojama ramiai, po smarkaus lietaus geriau automobilį palikti prie pagrindinio kelio ir likusią dalį nueiti pėsčiomis.</li>
+    <li><strong>Beratas → Gjirokastra:</strong> kelias veda per kalnus (Tepelenę, Këlcyrę) – realus važiavimo laikas apie 3 val. 30 min., gerokai daugiau, nei atrodo pagal atstumą žemėlapyje.</li>
+    <li><strong>Paskutinę dieną</strong> automobilio grąžinimui ir registracijai TIA oro uoste liks daugiau nei 3 valandos iki skrydžio – skubėti nereikės.</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="section-title">1 diena · spalio 30, penktadienis</h2>
+  <p style="color:var(--muted); margin-top:-0.6rem;">Atvykimas į Tiraną</p>
+
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge" style="background:var(--day1);">1</span>
+      <h3>Atvykimas ir nakvynė prie oro uosto</h3>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">20:30</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=41.4147,19.7206" target="_blank" rel="noopener">Tiranos oro uostas (TIA)</a></p>
+        <p class="stop-notes">Atskridus, pirmiausia atsiimkite bagažą ir nuomos automobilį. Kadangi atvykstama vėlai vakare, iš karto važiuokite į nakvynės vietą netoli oro uosto.</p>
+        <img class="spot-thumb" src="images/tiranos-oro-uostas-tia-315e2710.jpg" alt="Tiranos oro uostas" loading="lazy">
+        <div class="credit">Nuotrauka: albinfo, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">6 km · 10 min · asfaltuota vietinė gatvė netoli oro uosto</div>
+
+    <div class="stop">
+      <div class="stop-time">21:20</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=41.4010,19.7080" target="_blank" rel="noopener">Viešbutis prie oro uosto (Nikël)</a></p>
+        <p class="stop-notes">Nakvynė visai netoli oro uosto – patogu po vėlyvo skrydžio, nereikia ilgai važiuoti pirmą vakarą. Iš vakaro pasitikslinkite su viešbučiu vėlyvo įsiregistravimo laiką. Išvykimas kitą rytą apie 09:00.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">2 diena · spalio 31, šeštadienis</h2>
+  <p style="color:var(--muted); margin-top:-0.6rem;">Tirana → Beratas ir Osumo kanjonas</p>
+
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge" style="background:var(--day2);">2</span>
+      <h3>Beratas, Osumo kanjonas, Bogovė</h3>
+    </div>
+
+    <div class="leg">116 km · 1 val. 50 min · asfaltuota greitkelio tipo trasa per Rrogozhinę ir Fierį</div>
+
+    <div class="stop">
+      <div class="stop-time">11:00</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.7058,19.9520" target="_blank" rel="noopener">Berato pilis ir senamiestis (pirmas žvilgsnis)</a></p>
+        <p class="stop-notes">Trumpas stabtelėjimas pažvelgti į UNESCO senamiestį ir pilį iš apačios – pilnas apsilankymas laukia vakare, grįžus iš kanjono.</p>
+        <img class="spot-thumb" src="images/berato-pilis-ir-senamiestis-pirmas-vilgsnis-c68d5ba6.jpg" alt="Berato pilis" loading="lazy">
+        <div class="credit">Nuotrauka: Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Berat_Castle_(by_Pudelek)_2.JPG" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">23 km · 44 min · asfaltuota SH72 (Berat–Čorovodė kryptimi)</div>
+
+    <div class="stop">
+      <div class="stop-time">12:25</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.6206,20.0918" target="_blank" rel="noopener">Osumo kanjono apžvalgos aikštelė</a></p>
+        <p class="stop-notes">Įspūdingas kanjono vaizdas. Automobilį palikite aikštelėje viršuje – toliau žemyn eina tik pėsčiųjų takas, avėkite patogią avalynę, gali būti šlapia.</p>
+        <img class="spot-thumb" src="images/osumo-kanjono-ap-valgos-aik-tel-7c3ced10.jpg" alt="Osumo kanjonas" loading="lazy">
+        <div class="credit">Nuotrauka: Pasztilla aka Attila Terbócs, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Osum_Canyon,_2016-07_01.jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">6 km · 20 min · atgal iki SH72, tada SH72 į Bogovę</div>
+
+    <div class="stop">
+      <div class="stop-time">13:10</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.6395,20.0805" target="_blank" rel="noopener">Pietūs Bogovės kaimelyje</a></p>
+        <p class="stop-notes">Pietų pertrauka mažame kalnų kaimelyje netoli kanjono – rami vietinė virtuvė, gražūs kaimo ir kalnų vaizdai aplinkui.</p>
+        <img class="spot-thumb" src="images/piet-s-bogov-s-kaimelyje-08014061.jpg" alt="Bogovės kaimelis" loading="lazy">
+        <div class="credit">Nuotrauka: Bunker92, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Bogov%C3%AB_(5).jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">22 km · 40 min · asfaltuota SH72 atgal į Beratą</div>
+
+    <div class="stop">
+      <div class="stop-time">15:00</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.7058,19.9520" target="_blank" rel="noopener">Beratas – senamiestis ir pilis (nakvynė)</a></p>
+        <p class="stop-notes">Vakare pasivaikščiokite po Mangalemo ir Goricos kvartalus, užlipkite iki pilies – saulei leidžiantis apie 16:30–17:00 vaizdas nuo Goricos tilto ypač gražus. Automobilį geriausia palikti apačioje, senamiesčio gatvelės siauros. Kitą rytą išvažiuokite anksti, apie 08:15.</p>
+        <img class="spot-thumb" src="images/beratas-senamiestis-ir-pilis-nakvyn-b21114a9.jpg" alt="Berato senamiestis" loading="lazy">
+        <div class="credit">Nuotrauka: Pero Kvrzica, CC BY 2.0 · <a href="https://commons.wikimedia.org/wiki/File:Old_town_of_berat_albania_3.jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">3 diena · lapkričio 1, sekmadienis</h2>
+  <p style="color:var(--muted); margin-top:-0.6rem;">Beratas → Gjirokastra</p>
+
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge" style="background:var(--day3);">3</span>
+      <h3>Gjirokastros bazaras ir pilis</h3>
+    </div>
+
+    <div class="leg">147 km · 3 val. 31 min · asfaltuota nacionalinė trasa per Tepelenę ir Këlcyrę</div>
+
+    <div class="stop">
+      <div class="stop-time">11:46</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.0758,20.1401" target="_blank" rel="noopener">Gjirokastros senasis bazaras – pietūs (Kujtimi)</a></p>
+        <p class="stop-notes">Laisvo laiko pasivaikščioti po akmenimis grįstą bazarą prieš pietus 13:00–14:00 tradiciniame restorane Kujtimi.</p>
+        <img class="spot-thumb" src="images/gjirokastros-senasis-bazaras-piet-s-kujtimi-6333ec38.jpg" alt="Gjirokastros bazaras" loading="lazy">
+        <div class="credit">Nuotrauka: David Stanley, CC BY 2.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokaster_Bazaar_Quarter_(31737375018).jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">0,3 km · 1 min · trumpas privažiavimas senamiestyje</div>
+
+    <div class="stop">
+      <div class="stop-time">14:15</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.0778,20.1385" target="_blank" rel="noopener">Gjirokastros pilis</a></p>
+        <p class="stop-notes">UNESCO senamiestis ir pilis su ginklų ekspozicija bei plačiu vaizdu į Drino slėnį. Kelias į pilį status – patogi avalynė pravers. Automobilį palikite prie senamiesčio apačioje esančiose aikštelėse. Nakvynė Gjirokastroje.</p>
+        <img class="spot-thumb" src="images/gjirokastros-pilis-dc66c227.jpg" alt="Gjirokastros pilis" loading="lazy">
+        <div class="credit">Nuotrauka: Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokast%C3%ABr_Castle_(by_Pudelek)_3.jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">4 diena · lapkričio 2, pirmadienis</h2>
+  <p style="color:var(--muted); margin-top:-0.6rem;">Gjirokastra → Tiranos oro uostas</p>
+
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge" style="background:var(--day4);">4</span>
+      <h3>Grįžimas per Fierą</h3>
+    </div>
+
+    <div class="leg">105 km · 2 val. 17 min · asfaltuota nacionalinė trasa per Tepelenę</div>
+
+    <div class="stop">
+      <div class="stop-time">11:30</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=40.7239,19.5561" target="_blank" rel="noopener">Fier – pietų pertrauka</a></p>
+        <p class="stop-notes">Sustojimas pusiaukelėje į oro uostą – laisvo laiko ir pietūs 13:00–14:00 miesto centre prieš paskutinį važiavimo etapą.</p>
+        <img class="spot-thumb" src="images/fier-piet-pertrauka-735bac2b.jpg" alt="Fier" loading="lazy">
+        <div class="credit">Nuotrauka: RoyalHeritageAlb, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Fier,_Albania.jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+
+    <div class="leg">107 km · 1 val. 40 min · asfaltuota pakrantės/greitkelio trasa per Lushnję ir Durresą</div>
+
+    <div class="stop">
+      <div class="stop-time">15:45</div>
+      <div class="stop-body">
+        <p class="stop-name"><a href="https://www.google.com/maps?q=41.4147,19.7206" target="_blank" rel="noopener">Tiranos oro uostas (TIA) – automobilio grąžinimas</a></p>
+        <p class="stop-notes">Su gera atsarga grąžinkite nuomos automobilį ir registruokitės skrydžiui TIA→WAW (19:05) – iki skrydžio liks daugiau nei 3 valandos, tad skubėti nereikės.</p>
+        <img class="spot-thumb" src="images/tiranos-oro-uostas-tia-automobilio-gr-inimas-315e2710.jpg" alt="Tiranos oro uostas" loading="lazy">
+        <div class="credit">Nuotrauka: albinfo, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg" target="_blank" rel="noopener">šaltinis</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Praktinė informacija</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="label">Atvykimo skrydis</div>
+      <div class="value">WAW → TIA, 10-30, nusileidimas 20:30</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Grįžtamasis skrydis</div>
+      <div class="value">TIA → WAW, 11-02, 19:05</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Automobilio grąžinimas</div>
+      <div class="value">TIA, apie 15:45–16:30 (11-02)</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Keliautojai</div>
+      <div class="value">4 suaugę</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Nuomos automobilis</div>
+      <div class="value">kontaktas: ______</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Grupės kontaktas</div>
+      <div class="value">______</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Biudžeto suvestinė (4 keliautojams)</h2>
+  <table class="budget">
+    <thead>
+      <tr><th>Kategorija</th><th>Min</th><th>Tikėtina</th><th>Max</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Skrydžiai (WAW↔TIA, 4 asm.)</td><td>€308</td><td>€308</td><td>€308</td></tr>
+      <tr><td>Registruotas bagažas</td><td>€80</td><td>€160</td><td>€280</td></tr>
+      <tr><td>Automobilio nuoma (4 d., pilnas draudimas)</td><td>€140</td><td>€200</td><td>€280</td></tr>
+      <tr><td>Nakvynė (3 naktys, 2 kambariai)</td><td>€160</td><td>€250</td><td>€420</td></tr>
+      <tr><td>Maistas</td><td>€210</td><td>€350</td><td>€560</td></tr>
+      <tr><td>Įėjimo bilietai (pilys, muziejai)</td><td>€20</td><td>€35</td><td>€60</td></tr>
+      <tr><td>Kuras</td><td>€73</td><td>€92</td><td>€114</td></tr>
+      <tr class="total"><td>Iš viso</td><td>€991</td><td>€1 395</td><td>€2 022</td></tr>
+      <tr class="total"><td>Vienam žmogui</td><td>€248</td><td>€349</td><td>€506</td></tr>
+    </tbody>
+  </table>
+  <p class="budget-note">Kainos apytikslės – bagažo, nakvynės ir kuro sumas verta patikslinti prieš rezervuojant.</p>
+</section>
+
+</main>
+
+<footer>
+  Albanija · 2026-10-30 – 2026-11-02
+  <!-- BUILD_TIME -->
+</footer>
+
+<div class="lightbox-overlay" id="lightbox">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const DAY_COLOR_PALETTE = ["#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4", "#42d4f4"];
+  const dayColor = (day) => DAY_COLOR_PALETTE[(day - 1) % DAY_COLOR_PALETTE.length];
+
+  const mapStops = {
+    type: "FeatureCollection",
+    features: [
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.7206, 41.4147] },
+        properties: { day: 1, name: "Tiranos oro uostas (TIA)", arrive: "20:30", depart: "21:00",
+          google_maps_url: "https://www.google.com/maps?q=41.4147,19.7206", color: dayColor(1) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.708, 41.401] },
+        properties: { day: 1, name: "Viešbutis prie oro uosto (Nikël)", arrive: "21:20", depart: "09:00",
+          google_maps_url: "https://www.google.com/maps?q=41.4010,19.7080", color: dayColor(1) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.952, 40.7058] },
+        properties: { day: 2, name: "Berato pilis ir senamiestis (pirmas žvilgsnis)", arrive: "11:00", depart: "11:30",
+          google_maps_url: "https://www.google.com/maps?q=40.7058,19.9520", color: dayColor(2) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [20.0918, 40.6206] },
+        properties: { day: 2, name: "Osumo kanjono apžvalgos aikštelė", arrive: "12:25", depart: "12:40",
+          google_maps_url: "https://www.google.com/maps?q=40.6206,20.0918", color: dayColor(2) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [20.0805, 40.6395] },
+        properties: { day: 2, name: "Pietūs Bogovės kaimelyje", arrive: "13:10", depart: "14:00",
+          google_maps_url: "https://www.google.com/maps?q=40.6395,20.0805", color: dayColor(2) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.952, 40.7058] },
+        properties: { day: 2, name: "Beratas – senamiestis ir pilis (nakvynė)", arrive: "15:00", depart: "08:15",
+          google_maps_url: "https://www.google.com/maps?q=40.7058,19.9520", color: dayColor(2) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [20.1401, 40.0758] },
+        properties: { day: 3, name: "Gjirokastros senasis bazaras – pietūs (Kujtimi)", arrive: "11:46", depart: "14:00",
+          google_maps_url: "https://www.google.com/maps?q=40.0758,20.1401", color: dayColor(3) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [20.1385, 40.0778] },
+        properties: { day: 3, name: "Gjirokastros pilis", arrive: "14:15", depart: "17:00",
+          google_maps_url: "https://www.google.com/maps?q=40.0778,20.1385", color: dayColor(3) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.5561, 40.7239] },
+        properties: { day: 4, name: "Fier – pietų pertrauka", arrive: "11:30", depart: "14:00",
+          google_maps_url: "https://www.google.com/maps?q=40.7239,19.5561", color: dayColor(4) } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [19.7206, 41.4147] },
+        properties: { day: 4, name: "Tiranos oro uostas (TIA) – automobilio grąžinimas", arrive: "15:45", depart: "19:05",
+          google_maps_url: "https://www.google.com/maps?q=41.4147,19.7206", color: dayColor(4) } },
+    ],
+  };
+
+  const dayRoutes = {
+    type: "FeatureCollection",
+    features: [
+      { type: "Feature", properties: { day: 1, color: dayColor(1), dashArray: "6, 8" },
+        geometry: { type: "LineString", coordinates: [[19.7206, 41.4147], [19.708, 41.401]] } },
+      { type: "Feature", properties: { day: 2, color: dayColor(2), dashArray: "6, 8" },
+        geometry: { type: "LineString", coordinates: [
+          [19.708, 41.401], [19.952, 40.7058], [20.0918, 40.6206], [20.0805, 40.6395], [19.952, 40.7058],
+        ] } },
+      { type: "Feature", properties: { day: 3, color: dayColor(3), dashArray: "6, 8" },
+        geometry: { type: "LineString", coordinates: [
+          [19.952, 40.7058], [20.1401, 40.0758], [20.1385, 40.0778],
+        ] } },
+      { type: "Feature", properties: { day: 4, color: dayColor(4), dashArray: "6, 8" },
+        geometry: { type: "LineString", coordinates: [
+          [20.1385, 40.0778], [19.5561, 40.7239], [19.7206, 41.4147],
+        ] } },
+    ],
+  };
+
+  const mapBounds = [
+    [40.0758, 19.5561],
+    [41.4147, 20.1401],
+  ];
+
+  const map = L.map('trip-map').fitBounds(mapBounds, { padding: [30, 30] });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  L.geoJSON(dayRoutes, {
+    style: (f) => ({ color: f.properties.color, weight: 3, dashArray: f.properties.dashArray, opacity: 0.8 })
+  }).addTo(map);
+
+  L.geoJSON(mapStops, {
+    pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+      radius: 7, color: f.properties.color, fillColor: f.properties.color, fillOpacity: 0.9, weight: 2
+    }),
+    onEachFeature: (f, layer) => layer.bindPopup(
+      `<b>Diena ${f.properties.day}: ${f.properties.name}</b><br>${f.properties.arrive}–${f.properties.depart}<br><a href="${f.properties.google_maps_url}" target="_blank" rel="noopener">Google Maps</a>`
+    ),
+  }).addTo(map);
+})();
+
+// Lightbox
+(function () {
+  const overlay = document.getElementById('lightbox');
+  const overlayImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.spot-thumb').forEach((img) => {
+    img.addEventListener('click', () => {
+      overlayImg.src = img.src;
+      overlayImg.alt = img.alt;
+      overlay.classList.add('open');
+    });
+  });
+  overlay.addEventListener('click', () => {
+    overlay.classList.remove('open');
+    overlayImg.src = '';
+  });
+})();
+</script>
+
+</body>
+</html>
