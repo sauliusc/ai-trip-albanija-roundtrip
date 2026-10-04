@@ -3,504 +3,583 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Albanija 2026: Tirana – Beratas – Gjirokastra</title>
-<link rel="preconnect" href="https://unpkg.com">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<title>Albanija · Kelionės planas · 2026-10-30 – 2026-11-02</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
-    --accent: #c1440e;
-    --accent-dark: #8f3009;
-    --accent-light: #f4d9c8;
-    --ink: #2b2118;
-    --ink-soft: #5a4c40;
-    --bg: #faf6f2;
-    --card-bg: #ffffff;
-    --border: #ecdfd3;
+    --accent: #c8102e;
+    --accent-dark: #8c0a20;
+    --accent-light: #fbe4e8;
+    --ink: #262220;
+    --muted: #6b6460;
+    --bg: #faf7f5;
+    --card: #ffffff;
+    --border: #ece5e2;
     --radius: 14px;
   }
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.5;
   }
-  a { color: var(--accent-dark); }
-  img { max-width: 100%; display: block; }
-
   header.hero {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
     color: #fff;
-    padding: 32px 20px 28px;
-    text-align: center;
+    padding: 2rem 1.2rem 1.6rem;
   }
-  header.hero h1 {
-    margin: 0 0 8px;
-    font-size: 1.6rem;
-    line-height: 1.25;
-  }
-  header.hero .subtitle {
-    font-size: 0.98rem;
-    opacity: 0.95;
-    margin: 4px 0;
-  }
-  header.hero .badges {
-    margin-top: 14px;
+  header.hero h1 { margin: 0 0 .3rem; font-size: 1.6rem; }
+  header.hero p { margin: .2rem 0; opacity: .95; font-size: .97rem; }
+  nav.quicklinks {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+    gap: .5rem;
+    overflow-x: auto;
+    padding: .7rem 1rem;
+    background: var(--accent-dark);
+    position: sticky;
+    top: 0;
+    z-index: 50;
   }
-  header.hero .badge {
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 999px;
-    padding: 5px 12px;
-    font-size: 0.82rem;
-  }
-
-  main { max-width: 760px; margin: 0 auto; padding: 18px 14px 60px; }
-
-  section { margin-bottom: 28px; }
-
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-  }
-
-  h2.section-title {
-    font-size: 1.15rem;
-    color: var(--accent-dark);
-    margin: 0 0 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Practical info */
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--border);
-    font-size: 0.94rem;
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-row .label { color: var(--ink-soft); }
-  .info-row .value { text-align: right; font-weight: 600; }
-
-  /* Tips */
-  .tips { background: var(--accent-light); border-radius: var(--radius); padding: 16px 18px; border: 1px solid #ecc9a8; }
-  .tips h2.section-title { color: var(--accent-dark); }
-  .tips ul { margin: 0; padding-left: 20px; }
-  .tips li { margin-bottom: 8px; font-size: 0.94rem; }
-  .tips li:last-child { margin-bottom: 0; }
-
-  /* Map */
-  #map { width: 100%; height: 360px; border-radius: var(--radius); border: 1px solid var(--border); }
-
-  /* Days */
-  .day-section { margin-bottom: 34px; }
-  .day-header {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .day-header h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: var(--ink);
-    border-left: 5px solid var(--accent);
-    padding-left: 10px;
-  }
-  .day-meta {
-    font-size: 0.85rem;
-    color: var(--ink-soft);
-    padding-left: 15px;
-  }
-  .route-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 4px 15px; }
-  .route-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--accent);
+  nav.quicklinks a {
     color: #fff;
     text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 10px 16px;
-    border-radius: 999px;
-    transition: background 0.15s ease;
+    font-size: .85rem;
+    white-space: nowrap;
+    padding: .4rem .7rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,.15);
   }
-  .route-btn:active { background: var(--accent-dark); }
-
-  .timeline { display: flex; flex-direction: column; gap: 14px; }
-
-  .stop {
-    background: var(--card-bg);
+  main { max-width: 820px; margin: 0 auto; padding: 1rem; }
+  section { margin-bottom: 2.2rem; }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: .4rem;
+    font-size: 1.3rem;
+  }
+  h3 { font-size: 1.05rem; margin-top: 1.2rem; }
+  .card {
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 14px 16px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
   }
-  .stop-time {
+  .route-btn {
+    display: block;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    margin-bottom: .8rem;
+  }
+  .route-btn:active { background: var(--accent-dark); }
+  .route-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .route-btns .route-btn { flex: 1; min-width: 140px; }
+  .overnight-tag {
     display: inline-block;
     background: var(--accent-light);
     color: var(--accent-dark);
-    font-weight: 700;
-    font-size: 0.82rem;
-    border-radius: 999px;
-    padding: 3px 10px;
-    margin-bottom: 6px;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .2rem .6rem;
+    border-radius: 20px;
+    margin-bottom: .6rem;
   }
-  .stop h3 { margin: 4px 0 6px; font-size: 1.02rem; }
-  .stop p.notes { margin: 6px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
-  .stop a.gmaps-link { font-size: 0.82rem; display: inline-block; margin-top: 8px; }
-
-  .spot-thumb { margin-top: 10px; cursor: zoom-in; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
-  .spot-thumb img { width: 100%; height: 170px; object-fit: cover; display: block; }
-  .credit { font-size: 0.72rem; color: var(--ink-soft); margin-top: 4px; }
-  .credit a { color: var(--ink-soft); }
-
-  .leg-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
-    margin-left: 8px;
-    border-left: 3px dotted var(--accent);
-    font-size: 0.86rem;
-    color: var(--ink-soft);
+  .stop {
+    border-left: 3px solid var(--accent);
+    padding-left: .8rem;
+    margin-bottom: 1rem;
   }
-  .leg-card .leg-icon { font-size: 1.1rem; }
-  .leg-card b { color: var(--ink); }
-
-  /* Budget */
-  table.budget { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-  table.budget th, table.budget td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--border); }
-  table.budget th { color: var(--accent-dark); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; }
-  table.budget td.num { text-align: right; white-space: nowrap; }
-  table.budget tr.total td { font-weight: 700; border-top: 2px solid var(--accent); border-bottom: none; }
-  .budget-note { font-size: 0.82rem; color: var(--ink-soft); margin-top: 10px; }
-  .budget-scroll { overflow-x: auto; }
-
-  footer {
-    text-align: center;
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-    padding: 20px 14px 40px;
+  .stop-time { font-weight: 700; color: var(--accent-dark); font-size: .9rem; }
+  .stop-name { font-weight: 700; margin: .1rem 0 .3rem; }
+  .stop-notes { font-size: .93rem; color: var(--ink); }
+  .leg {
+    font-size: .85rem;
+    color: var(--muted);
+    margin: .6rem 0 .6rem .8rem;
+    padding: .4rem .6rem;
+    background: #f4f0ee;
+    border-radius: 8px;
+    display: inline-block;
   }
+  .leg::before { content: "🚗 "; }
+  .spot-thumb {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 10px;
+    cursor: zoom-in;
+    display: block;
+    margin-top: .5rem;
+  }
+  .credit {
+    font-size: .72rem;
+    color: var(--muted);
+    margin: .2rem 0 .8rem;
+  }
+  .credit a { color: var(--muted); }
+  .tip-box {
+    background: #fff7e6;
+    border: 1px solid #f3dca0;
+    border-radius: 10px;
+    padding: .8rem 1rem;
+    font-size: .9rem;
+    margin: .8rem 0;
+  }
+  .tip-box::before { content: "💡 "; }
+  .food-box {
+    background: var(--accent-light);
+    border-radius: 10px;
+    padding: .7rem 1rem;
+    font-size: .88rem;
+    margin-top: .8rem;
+  }
+  .food-box h4 { margin: 0 0 .4rem; font-size: .9rem; color: var(--accent-dark); }
+  .food-box ul { margin: 0; padding-left: 1.1rem; }
+  .food-box li { margin-bottom: .3rem; }
+  #map { height: 360px; border-radius: var(--radius); margin-top: .5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+  table th, table td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
+  table th { background: var(--accent-light); color: var(--accent-dark); }
+  .total-row { font-weight: 700; background: #faf0f1; }
+  .grid-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .grid-cards { grid-template-columns: 1fr 1fr; }
+  }
+  .rent-card .rating { color: var(--accent-dark); font-weight: 700; }
+  .rent-card .price { font-size: 1.2rem; font-weight: 700; margin: .4rem 0; }
+  .book-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: .5rem .9rem;
+    border-radius: 8px;
+    font-size: .88rem;
+    margin-top: .5rem;
+  }
+  .dish-card img { width: 100%; border-radius: 10px; }
+  .dish-card .price { font-weight: 700; color: var(--accent-dark); }
+  .maps-link { font-size: .85rem; }
+  .practical dl { display: grid; grid-template-columns: 1fr; gap: .3rem; font-size: .92rem; }
+  .practical dt { font-weight: 700; color: var(--accent-dark); }
+  .practical dd { margin: 0 0 .6rem; }
+  footer { text-align: center; font-size: .75rem; color: var(--muted); padding: 2rem 1rem; }
 
-  /* Lightbox */
   #lightbox {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(20,14,10,0.92);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    position: fixed; inset: 0; background: rgba(0,0,0,.9);
+    display: none; align-items: center; justify-content: center;
+    z-index: 999; cursor: zoom-out; padding: 1rem;
   }
   #lightbox.open { display: flex; }
-  #lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
-  #lightbox .lb-close {
-    position: absolute; top: 16px; right: 20px;
-    color: #fff; font-size: 1.8rem; cursor: pointer; line-height: 1;
-  }
-
-  @media (min-width: 640px) {
-    header.hero h1 { font-size: 2rem; }
-    .info-grid { grid-template-columns: 1fr 1fr; }
-  }
+  #lightbox img { max-width: 100%; max-height: 90vh; border-radius: 6px; }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <h1>🇦🇱 Albanija: Tirana – Beratas – Gjirokastra</h1>
-  <p class="subtitle">2026 m. spalio 30 – lapkričio 2 d. · 4 dienos, 3 naktys · 4 keliautojai</p>
-  <p class="subtitle">Maršrutas: Tiranos oro uostas → Tirana → Beratas → Gjirokastra → Tiranos oro uostas</p>
-  <div class="badges">
-    <span class="badge">🚗 Nuomotas automobilis</span>
-    <span class="badge">✈️ WAW/WMI ⇄ TIA</span>
-    <span class="badge">🏛️ 2 UNESCO senamiesčiai</span>
-  </div>
+  <h1>🇦🇱 Albanija: Tirana — Beratas — Gjirokastra</h1>
+  <p><strong>2026-10-30 – 2026-11-02</strong> · 4 keliautojai · 3 nakvynės · nuomotas automobilis</p>
+  <p>Ratas iš Tiranos: Berato senamiestis ir Osumo kanjonas, tada Gjirokastros UNESCO pilis, grįžtant per Fierį atgal į oro uostą.</p>
 </header>
+
+<nav class="quicklinks">
+  <a href="#day-1">1 diena</a>
+  <a href="#day-2">2 diena</a>
+  <a href="#day-3">3 diena</a>
+  <a href="#day-4">4 diena</a>
+  <a href="#map-section">Žemėlapis</a>
+  <a href="#budget">Biudžetas</a>
+  <a href="#car-rental">Automobilis</a>
+  <a href="#food">Maistas</a>
+  <a href="#practical">Info</a>
+</nav>
 
 <main>
 
-  <section class="card">
-    <h2 class="section-title">📋 Praktinė informacija</h2>
-    <div class="info-grid">
-      <div class="info-row"><span class="label">Atvykimo skrydis</span><span class="value">Varšuva → Tirana (TIA), 10-30, atvykimas 20:30</span></div>
-      <div class="info-row"><span class="label">Grįžtamasis skrydis</span><span class="value">Tirana (TIA) → Varšuva, 11-02, išvykimas 19:05</span></div>
-      <div class="info-row"><span class="label">Automobilio grąžinimas</span><span class="value">TIA, 11-02, iki ~16:00 (atvykstama apie 15:45)</span></div>
-      <div class="info-row"><span class="label">Nakvynės</span><span class="value">Tirana (1 naktis) · Beratas (1 naktis) · Gjirokastra (1 naktis)</span></div>
-      <div class="info-row"><span class="label">Nuomos automobilio kontaktas</span><span class="value">—</span></div>
-      <div class="info-row"><span class="label">Skubios pagalbos numeris (Albanija)</span><span class="value">112</span></div>
-    </div>
-  </section>
+<section id="tips">
+  <div class="tip-box">
+    Osumo kanjone iki apžvalgos aikštelės kelias asfaltuotas – automobilį palikite viršuje, žemyn veda tik pėsčiųjų takas (gali būti slidu).
+  </div>
+  <div class="tip-box">
+    Iš Berato į Gjirokastrą važiuojame per Fierį ir Tepelenę – geras asfaltuotas kelias, bet vingiuotas per Vjosos slėnio kalvas, realiai užtruks apie 3 val. Jei Google Maps pasiūlys trumpesnį kelią per Përmetą (SH75) – jo nerinkite, dalis to kelio yra bekelė, netinkama nuomos automobiliui.
+  </div>
+</section>
 
-  <section class="tips">
-    <h2 class="section-title">💡 Svarbu žinoti</h2>
+<!-- DAY 1 -->
+<section id="day-1">
+  <h2>1 diena (spalio 30, penktadienis): atvykimas į Tiraną</h2>
+  <div class="route-btns">
+    <a class="route-btn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=41.414700,19.720600&destination=41.327500,19.818700&travelmode=driving">🧭 Dienos maršrutas Google Maps</a>
+  </div>
+  <span class="overnight-tag">🛏️ Nakvynė: Tirana (centras, netoli Skanderbego aikštės)</span>
+
+  <div class="stop">
+    <div class="stop-time">20:30 – 21:00</div>
+    <div class="stop-name">Tiranos oro uostas (TIA)</div>
+    <div class="stop-notes">Atskridus iš Varšuvos, pirmiausia atsiimkite bagažą ir nuomos automobilį. Iki miesto centro – apie 25–30 min., kelias tiesus ir naktį ramus.</div>
+    <img class="spot-thumb" src="images/tiranos-oro-uostas-tia-315e2710.jpg" alt="Tiranos oro uostas">
+    <div class="credit">Nuotrauka: albinfo, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="leg">15 km, apie 27 min. – asfaltuotas kelias iš oro uosto į miesto centrą</div>
+
+  <div class="stop">
+    <div class="stop-time">21:30 – 09:00 (kitą rytą)</div>
+    <div class="stop-name">Viešbutis Tiranos centre (Skanderbego aikštės rajonas)</div>
+    <div class="stop-notes">Prieš miegą verta trumpam nueiti iki Skanderbego aikštės, Et'hem Bėjaus mečetės ir laikrodžio bokšto – vakarais gražiai apšviesti. Automobilį patogiausia palikti mokamoje aikštelėje ar viešbučio parkavimo vietoje.</div>
+    <img class="spot-thumb" src="images/vie-butis-tiranos-centre-skanderbego-aik-t-s-rajonas-08d4bf60.jpg" alt="Skanderbego aikštė, Tirana">
+    <div class="credit">Nuotrauka: Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_-_Skanderbeg_Square_(Sheshi_Sk%C3%ABnderbej)_-_by_Pudelek.jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="food-box">
+    <h4>🍴 Vakarienė ir vakaro programa</h4>
     <ul>
-      <li>Kelias iš Berato į Gjirokastrą veda ne tiesiai per kalnus (Osumo kanjoną ar Përmetą), o ilgesniu, bet visiškai asfaltuotu keliu per Fierį ir Tepelenę – jei Google Maps kelionės metu siūlys trumpesnį maršrutą per Përmetą, jo <b>nerinkite</b>, nes tas kelias yra bekelė, netinkama nuomotam automobiliui.</li>
-      <li>Ruožas ties Tepelene ir Vjosos slėniu (2 ir 4 dieną) yra vingiuotas kalnuotas kelias – važiuokite ramiu tempu, nesivaikykite žemėlapio rodomo laiko.</li>
-      <li>Kelią iki Osumo kanjono apžvalgos aikštelės (SH72) galima ramiai važiuoti įprastu automobiliu – jis asfaltuotas iki pat aikštelės, tik toliau žemyn veda tik pėsčiųjų takas.</li>
-      <li>4 dieną iki oro uosto atvyksite su solidžia daugiau nei 3 valandų atsarga iki skrydžio – skubėti nereikės, bet pietų pertraukos Fieryje verta nesitęsti ilgiau nei suplanuota.</li>
+      <li><strong>Xheni Fast Food</strong> (~€5/asm.) – šeimos užkandinė Bloku kvartale, fasulė, pilafas, kepintos daržovės. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Xheni%20Fast%20Food%2C%20Tirana" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Byrek Special „Luani“</strong> (~€3/asm.) – šviežias byrek, gerai pakeliui ryte prieš išvykimą. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Byrek%20Special%20%22Luani%22%2C%20Tirana" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Komiteti – Kafe Muzeum</strong> – baras-muziejus su komunistinės epochos interjeru ir 18 rūšių raki, verta užsukti vien dėl atmosferos. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Komiteti%20%E2%80%93%20Kafe%20Muzeum%2C%20Tirana" target="_blank">Žemėlapyje</a></li>
     </ul>
-  </section>
+  </div>
+</section>
 
-  <section>
-    <h2 class="section-title">🗺️ Kelionės žemėlapis</h2>
-    <div id="map"></div>
-  </section>
+<!-- DAY 2 -->
+<section id="day-2">
+  <h2>2 diena (spalio 31, šeštadienis): Tirana → Beratas ir Osumo kanjonas</h2>
+  <div class="route-btns">
+    <a class="route-btn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=41.327500,19.818700&destination=40.705800,19.952000&travelmode=driving&waypoints=40.705800,19.952000|40.620600,20.091800">🧭 Dienos maršrutas Google Maps</a>
+  </div>
+  <span class="overnight-tag">🛏️ Nakvynė: Beratas</span>
 
-  <!-- ===================== DAY 1 ===================== -->
-  <section class="day-section">
-    <div class="day-header">
-      <h2>1 diena · spalio 30, penktadienis</h2>
-      <div class="day-meta">Atvykimas į Tiraną · nakvynė: Tirana (centras) · važiavimo laikas ~27 min, 15 km</div>
+  <div class="stop">
+    <div class="stop-time">09:00</div>
+    <div class="stop-name">Viešbutis Tiranos centre (išvykimas)</div>
+    <div class="stop-notes">Po pusryčių keliaukite tiesiai Berato kryptimi. Automobilį iš nakties parkavimo atsiimkite laiku, kad išvengtumėte ryto spūsčių centre.</div>
+  </div>
+
+  <div class="leg">124 km, apie 2 val. 1 min. – asfaltuotas nacionalinis kelias SH4/SH70, lygumos</div>
+
+  <div class="stop">
+    <div class="stop-time">11:10 – 11:20</div>
+    <div class="stop-name">Berato pilis ir senamiestis (pirmas žvilgsnis)</div>
+    <div class="stop-notes">Trumpas stabtelėjimas pažvelgti į UNESCO senamiestį ir pilį iš apačios – pilnas apsilankymas laukia po pietų, grįžus iš kanjono.</div>
+    <img class="spot-thumb" src="images/berato-pilis-ir-senamiestis-pirmas-vilgsnis-c68d5ba6.jpg" alt="Berato pilis">
+    <div class="credit">Nuotrauka: Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Berat_Castle_(by_Pudelek)_2.JPG" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="leg">23 km, apie 44 min. – asfaltuotas kelias SH72 iki apžvalgos aikštelės; žemyn į kanjoną tik pėsčiųjų takas</div>
+
+  <div class="stop">
+    <div class="stop-time">12:04 – 12:16</div>
+    <div class="stop-name">Osumo kanjono apžvalgos aikštelė</div>
+    <div class="stop-notes">Įspūdingas kanjono vaizdas nuo aikštelės viršuje. Automobilį palikite aikštelėje, žemyn eina tik pėsčiųjų takas – avėkite patogią avalynę, gali būti šlapia.</div>
+    <img class="spot-thumb" src="images/osumo-kanjono-ap-valgos-aik-tel-7c3ced10.jpg" alt="Osumo kanjonas">
+    <div class="credit">Nuotrauka: Pasztilla aka Attila Terbócs, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Osum_Canyon,_2016-07_01.jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="leg">23 km, apie 44 min. – tas pats asfaltuotas SH72 kelias, grįžtant į Beratą</div>
+
+  <div class="stop">
+    <div class="stop-time">13:00 – 14:00</div>
+    <div class="stop-name">Pietūs Berato senamiestyje (restoranas „Homeri“, Mangalemas)</div>
+    <div class="stop-notes">Pietų pertrauka Mangalemo kvartale, netoli senamiesčio – vietinė virtuvė ir vaizdas į upę bei pilies kalvą. Automobilį palikite apatinėje aikštelėje, senamiesčio gatvelės siauros.</div>
+    <img class="spot-thumb" src="images/piet-s-berato-senamiestyje-restoranas-homeri-mangalemas-c400be39.jpg" alt="Mangalemo kvartalas, Beratas">
+    <div class="credit">Nuotrauka: Avi1111 dr. avishai teicher, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Berat,_Mangalem_quarter,_Albania.JPG" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="stop">
+    <div class="stop-time">14:00 – 08:15 (kitą rytą)</div>
+    <div class="stop-name">Beratas – senamiestis ir pilis (nakvynė)</div>
+    <div class="stop-notes">Po pietų pasivaikščiokite po Mangalemo ir Goricos kvartalus, užlipkite iki pilies – saulei leidžiantis apie 16:30–17:00 vaizdas nuo Goricos tilto ypač gražus. Kitą rytą išvažiuokite anksti, apie 08:15 – kelias iki Gjirokastros kalnuotas ir ilgesnis, nei atrodo žemėlapyje.</div>
+    <img class="spot-thumb" src="images/beratas-senamiestis-ir-pilis-nakvyn-b21114a9.jpg" alt="Berato senamiestis">
+    <div class="credit">Nuotrauka: Pero Kvrzica, CC BY 2.0 · <a href="https://commons.wikimedia.org/wiki/File:Old_town_of_berat_albania_3.jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="food-box">
+    <h4>🍴 Pietūs ir vakarienė Berate</h4>
+    <ul>
+      <li><strong>Restorant Mangalemi</strong> (~€10/asm.) – akmeninis pastatas su terasa į pilies kalvą, kepta upėtakio žuvis. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Restorant%20Mangalemi%2C%20Beratas" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Eni Traditional Food</strong> (~€8/asm.) – šeimyninė taverna prie Goricos tilto, rūkytos kofte, troškinti baklažanai. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Eni%20Traditional%20Food%2C%20Beratas" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Ballkoni Gorices</strong> (~€9/asm.) – vaizdas į Goricos tiltą, gera vieta vakarienei saulėlydžio metu. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Ballkoni%20Gorices%2C%20Beratas" target="_blank">Žemėlapyje</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- DAY 3 -->
+<section id="day-3">
+  <h2>3 diena (lapkričio 1, sekmadienis): Beratas → Gjirokastra</h2>
+  <div class="route-btns">
+    <a class="route-btn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=40.705800,19.952000&destination=40.077800,20.138500&travelmode=driving&waypoints=40.075800,20.140100">🧭 Dienos maršrutas Google Maps</a>
+  </div>
+  <span class="overnight-tag">🛏️ Nakvynė: Gjirokastra</span>
+
+  <div class="stop">
+    <div class="stop-time">08:15</div>
+    <div class="stop-name">Beratas (išvykimas)</div>
+    <div class="stop-notes">Anksti ryte išvykstame Gjirokastros kryptimi – kelias per kalnus ilgesnis, nei rodo žemėlapis, tad neskubėkite ir stabtelėkite, jei norėsite pasigrožėti vaizdais.</div>
+  </div>
+
+  <div class="leg">147 km, apie 3 val. – asfaltuotas nacionalinis kelias SH4 per Fierį ir Tepelenę (Vjosos slėnis, kalvota, vingiuota)</div>
+
+  <div class="stop">
+    <div class="stop-time">11:46 – 14:00</div>
+    <div class="stop-name">Gjirokastros senasis bazaras – pietūs (Kujtimi)</div>
+    <div class="stop-notes">Laisvo laiko pasivaikščioti po akmenimis grįstą bazarą prieš pietus 13:00–14:00 tradiciniame restorane Kujtimi.</div>
+    <img class="spot-thumb" src="images/gjirokastros-senasis-bazaras-piet-s-kujtimi-6333ec38.jpg" alt="Gjirokastros bazaras">
+    <div class="credit">Nuotrauka: David Stanley (Nanaimo, Kanada), CC BY 2.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokaster_Bazaar_Quarter_(31737375018).jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="leg">~0 km, apie 1 min. – trumpas vietinis atstumas mieste</div>
+
+  <div class="stop">
+    <div class="stop-time">14:15 – 17:00</div>
+    <div class="stop-name">Gjirokastros pilis</div>
+    <div class="stop-notes">UNESCO senamiestis ir pilis su ginklų ekspozicija bei plačiu vaizdu į Drino slėnį. Kelias į pilį status – patogi avalynė pravers. Automobilį palikite senamiesčio apatinėse aikštelėse.</div>
+    <img class="spot-thumb" src="images/gjirokastros-pilis-2d0eac69.jpg" alt="Gjirokastros pilis">
+    <div class="credit">Nuotrauka: Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokast%C3%ABr_Castle_(by_Pudelek)_4_-_Clock_Tower.JPG" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="food-box">
+    <h4>🍴 Pietūs ir vakarienė Gjirokastroje</h4>
+    <ul>
+      <li><strong>Kujtimi</strong> (~€8/asm.) – šeimos taverna pačiame bazare, kepta ėriena, qofte, vynlapiai. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Kujtimi%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Taverna Tradicionale Kardhashi</strong> (~€8/asm.) – gausios porcijos, UNESCO senamiesčio atmosfera. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Taverna%20Tradicionale%20Kardhashi%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></li>
+      <li><strong>Restorant Tradicional Urat</strong> (~€8/asm.) – šeimos valdoma taverna, gera alternatyva vakarienei. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Restorant%20Tradicional%20Urat%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- DAY 4 -->
+<section id="day-4">
+  <h2>4 diena (lapkričio 2, pirmadienis): Gjirokastra → Tiranos oro uostas</h2>
+  <div class="route-btns">
+    <a class="route-btn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=40.077800,20.138500&destination=41.414700,19.720600&travelmode=driving&waypoints=40.723900,19.556100">🧭 Dienos maršrutas Google Maps</a>
+  </div>
+  <span class="overnight-tag">✈️ Grįžtamasis skrydis TIA→WAW 19:05</span>
+
+  <div class="stop">
+    <div class="stop-time">09:00</div>
+    <div class="stop-name">Gjirokastros pilis (išvykimas)</div>
+    <div class="stop-notes">Paskutinis rytas Gjirokastroje – trumpai atsisveikinkite su pilimi ir senamiesčiu, tada išvykstame į Fjerį ir Tiranos oro uostą.</div>
+  </div>
+
+  <div class="leg">105 km, apie 2 val. 10 min. – asfaltuotas nacionalinis kelias SH4 per Tepelenę ir Vjosos slėnį</div>
+
+  <div class="stop">
+    <div class="stop-time">11:17 – 14:00</div>
+    <div class="stop-name">Fier – pietų pertrauka</div>
+    <div class="stop-notes">Sustojimas pusiaukelėje į oro uostą – laisvo laiko ir pietūs 13:00–14:00 miesto centre prieš paskutinį važiavimo etapą.</div>
+    <img class="spot-thumb" src="images/fier-piet-pertrauka-735bac2b.jpg" alt="Fier">
+    <div class="credit">Nuotrauka: RoyalHeritageAlb, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Fier,_Albania.jpg" target="_blank">šaltinis</a></div>
+  </div>
+
+  <div class="leg">107 km, apie 1 val. 40 min. – asfaltuotas nacionalinis kelias SH4, žemumų kelias</div>
+
+  <div class="stop">
+    <div class="stop-time">15:45 – 19:05</div>
+    <div class="stop-name">Tiranos oro uostas (TIA) – automobilio grąžinimas</div>
+    <div class="stop-notes">Su gera atsarga grąžinkite nuomos automobilį ir registruokitės skrydžiui TIA→WAW (19:05) – iki skrydžio liks daugiau nei 3 valandos, skubėti nereikės.</div>
+  </div>
+
+  <div class="food-box">
+    <h4>🍴 Pietūs Fieryje</h4>
+    <ul>
+      <li><strong>Bar Restorant Egnatia</strong> (~€9/asm.) – trijų brolių šeimos restoranas su tradiciniais albanų receptais, patogu pakeliui į oro uostą. <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Bar%20Restorant%20Egnatia%2C%20Fier" target="_blank">Žemėlapyje</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- MAP -->
+<section id="map-section">
+  <h2>Žemėlapis</h2>
+  <div id="map"></div>
+</section>
+
+<!-- BUDGET -->
+<section id="budget">
+  <h2>Biudžeto apžvalga</h2>
+  <p>Visos sumos – 4 keliautojams, 3 nakvynėms, su nuomotu automobiliu.</p>
+  <table>
+    <thead><tr><th>Kategorija</th><th>Min</th><th>Tikėtina</th><th>Max</th><th>Pastabos</th></tr></thead>
+    <tbody>
+      <tr><td>Skrydžiai WAW↔TIA (4 žm.)</td><td>€207</td><td>€337</td><td>€450</td><td>Atitinka tvarkaraštį (WAW 18:30→TIA 20:30; TIA 19:05→WAW). Rezervuoti anksčiau, kainos kyla.</td></tr>
+      <tr><td>Automobilio nuoma</td><td>€140</td><td>€160</td><td>€230</td><td>Karruka kaina be papildomo draudimo – patikrinti, ar įskaičiuotas pilnas draudimas.</td></tr>
+      <tr><td>Nakvynės (3 naktys, 2 kambariai)</td><td>€197</td><td>€359</td><td>€482</td><td>Tirana / Beratas / Gjirokastra – kainos nepatvirtintos konkrečioms datoms.</td></tr>
+      <tr><td>Maistas (4 žm., visos dienos)</td><td>€204</td><td>€248</td><td>€296</td><td>Pagal šiame plane siūlomas užeigas.</td></tr>
+      <tr><td>Įėjimo bilietai (pilys, 4 žm.)</td><td>€16</td><td>€24</td><td>€36</td><td>Berato ir Gjirokastros pilys – tik grynaisiais (lekais).</td></tr>
+      <tr><td>Degalai</td><td>€75</td><td>€96</td><td>€126</td><td>~585 km maršrutu, dyzelinas ~€2.35/l.</td></tr>
+      <tr class="total-row"><td>Viso (4 keliautojai)</td><td>€839</td><td>€1 224</td><td>€1 620</td><td></td></tr>
+      <tr class="total-row"><td>Vienam asmeniui</td><td>~€210</td><td>~€306</td><td>~€405</td><td></td></tr>
+    </tbody>
+  </table>
+  <h3>Į ką atkreipti dėmesį</h3>
+  <ul>
+    <li>Patvirtinkite nakvynių rezervacijas iš anksto – kainos ir kambarių talpa 4 žmonėms konkrečioms datoms dar nepatikrinta.</li>
+    <li>Paklauskite Karruka, ar į €140 kainą jau įskaičiuotas pilnas draudimas.</li>
+    <li>Pasiimkite grynųjų lekų – pilių bilietai ir Berato pilies mokestis priimami tik grynaisiais.</li>
+  </ul>
+</section>
+
+<!-- CAR RENTAL -->
+<section id="car-rental">
+  <h2>Automobilio nuoma</h2>
+  <div class="grid-cards">
+    <div class="card rent-card">
+      <h3>Karruka Rent a Car Rinas</h3>
+      <div class="rating">⭐ 4.9 (1298 atsiliepimų, Google Maps)</div>
+      <p>Kompaktinis krosoveris (Dacia Duster / Opel Crossland klasė), 5 vietos, talpi bagažinė 4 žmonių bagažui.</p>
+      <div class="price">~€140 už visą nuomos laikotarpį</div>
+      <p>Viena aukščiausiai vertinamų nuomos įmonių Tiranoje, geriausia kaina už klasę ir patogus pasitikimas net vakariniu skrydžiu (atvykimas 20:30).</p>
+      <p><em>Atsiėmimas:</em> Tiranos oro uostas (TIA) – nemokamas pasitikimas atvykimo salėje, trumpas pervežimas iki biuro.</p>
+      <a class="book-btn" href="https://karrukarental.com/reservation/" target="_blank">Rezervuoti</a>
     </div>
-    <div class="route-buttons">
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&origin=41.414700,19.720600&destination=41.327500,19.818700&travelmode=driving" target="_blank">🧭 Dienos maršrutas Google Maps</a>
+    <div class="card rent-card">
+      <h3>Rent Car Tirana</h3>
+      <div class="rating">⭐ 5.0 (278 atsiliepimai, Google Maps)</div>
+      <p>Kompaktinis krosoveris, 5 vietos, didelis bagažinės tūris.</p>
+      <div class="price">~€150 už visą nuomos laikotarpį</div>
+      <p>Tobulas 5.0/5 įvertinimas, politika „be depozito“ sumažina riziką susidurti su netikėtais mokesčiais atsiimant automobilį vėlai vakare.</p>
+      <p><em>Atsiėmimas:</em> Tiranos oro uostas (TIA) – nemokamas pasitikimas atvykimo salėje.</p>
+      <a class="book-btn" href="https://rentcartirana.com/" target="_blank">Rezervuoti</a>
     </div>
-    <div class="timeline">
-
-      <div class="stop">
-        <span class="stop-time">20:30 – 21:00</span>
-        <h3>Tiranos oro uostas (TIA)</h3>
-        <p class="notes">Atskridus iš Varšuvos, pirmiausia atsiimkite bagažą ir nuomos automobilį. Iki miesto centro važiuoti apie 25–30 minučių, kelias tiesus ir naktį ramus.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=41.4147,19.7206" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/tiranos-oro-uostas-tia-315e2710.jpg" alt="Tiranos oro uostas (TIA)" loading="lazy">
-        </div>
-        <p class="credit">© albinfo, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>15 km</b> · ~27 min · asfaltuotas pagrindinis kelias TIA–Tirana (per Kashar), lygus, miesto/lygumos ruožas</span></div>
-
-      <div class="stop">
-        <span class="stop-time">21:30 – 09:00 (kitą rytą)</span>
-        <h3>Viešbutis Tiranos centre (Skanderbego aikštės rajonas)</h3>
-        <p class="notes">Nakvynė pačiame miesto centre – prieš miegą verta trumpam nueiti iki Skanderbego aikštės, Et'hem Bėjaus mečetės ir laikrodžio bokšto, kurie vakarais gražiai apšviesti. Vakarienei rinkitės Bloku kvartalą (apie 10 min pėsčiomis nuo aikštės) – ten daug nebrangių vietinių užkandinių su qofte, byrek ir kitais tradiciniais patiekalais. Automobilį patogiausia palikti mokamoje aikštelėje ar viešbučio parkavimo vietoje. Iš vakaro pasitikslinkite su viešbučiu vėlyvo įsiregistravimo laiką.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=41.3275,19.8187" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/vie-butis-tiranos-centre-skanderbego-aik-t-s-rajonas-08d4bf60.jpg" alt="Skanderbego aikštė, Tirana" loading="lazy">
-        </div>
-        <p class="credit">© Pudelek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_-_Skanderbeg_Square_(Sheshi_Sk%C3%ABnderbej)_-_by_Pudelek.jpg" target="_blank">šaltinis</a></p>
-      </div>
-
+    <div class="card rent-card">
+      <h3>Sixt Tirana Airport</h3>
+      <div class="rating">⭐ 4.3 (1916 atsiliepimų, Google Maps)</div>
+      <p>Kompaktinis SUV/krosoveris, 5 vietos (pvz. Škoda Karoq ar panaši klasė).</p>
+      <div class="price">~€230 už visą nuomos laikotarpį</div>
+      <p>Tarptautinis prekės ženklas su skaidriomis sąlygomis ir pagalba 24/7 – aukštesnė kaina mainais į didesnį saugumą ir lankstumą grąžinant prieš skrydį.</p>
+      <p><em>Atsiėmimas:</em> Tiranos oro uosto terminalas – Sixt stendas, registratūra 24/7.</p>
+      <a class="book-btn" href="https://www.sixt.com/car-rental/albania/tirana/tirana-airport/" target="_blank">Rezervuoti</a>
     </div>
-  </section>
+  </div>
+  <div class="tip-box">
+    Rezervuodami nurodykite tikslų atvykimo laiką (spalio 30 d. 20:30) ir patvirtinkite, kad vėlyvas pasitikimas galimas. Kredito kortelė dažniausiai reikalinga depozitui (~€200–400). Patikrinkite, kad draudimas (CDW) apimtų žvyrkelius, ir aptarkite degalų politiką prieš pasirašydami sutartį. Automobilį būtina grąžinti TIA ne vėliau kaip ~17:00 lapkričio 2 d.
+  </div>
+</section>
 
-  <!-- ===================== DAY 2 ===================== -->
-  <section class="day-section">
-    <div class="day-header">
-      <h2>2 diena · spalio 31, šeštadienis</h2>
-      <div class="day-meta">Tirana → Beratas ir Osumo kanjonas · nakvynė: Beratas · važiavimo laikas ~3 val. 29 min, 170 km</div>
+<!-- FOOD -->
+<section id="food">
+  <h2>Kur pavalgyti</h2>
+  <table>
+    <thead><tr><th>Diena</th><th>Vieta</th><th>Prie ko</th><th>Tipas</th><th>Kaina/asm.</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Xheni Fast Food</td><td>Viešbutis, Bloku kvartalas</td><td>Užkandinė</td><td>~€5</td><td><a href="https://www.google.com/maps/search/?api=1&query=Xheni%20Fast%20Food%2C%20Tirana" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>1</td><td>Byrek Special „Luani“</td><td>Viešbutis, Skanderbego aikštė</td><td>Byrektorė</td><td>~€3</td><td><a href="https://www.google.com/maps/search/?api=1&query=Byrek%20Special%20%22Luani%22%2C%20Tirana" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>2</td><td>Restorant Mangalemi</td><td>Berato senamiestis</td><td>Tradicinė taverna</td><td>~€10</td><td><a href="https://www.google.com/maps/search/?api=1&query=Restorant%20Mangalemi%2C%20Beratas" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>2</td><td>Eni Traditional Food</td><td>Goricos kvartalas</td><td>Tradicinė taverna</td><td>~€8</td><td><a href="https://www.google.com/maps/search/?api=1&query=Eni%20Traditional%20Food%2C%20Beratas" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>2</td><td>Ballkoni Gorices</td><td>Goricos tiltas</td><td>Taverna su vaizdu</td><td>~€9</td><td><a href="https://www.google.com/maps/search/?api=1&query=Ballkoni%20Gorices%2C%20Beratas" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>3</td><td>Kujtimi</td><td>Gjirokastros bazaras</td><td>Šeimos taverna</td><td>~€8</td><td><a href="https://www.google.com/maps/search/?api=1&query=Kujtimi%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>3</td><td>Taverna Tradicionale Kardhashi</td><td>Gjirokastros senamiestis</td><td>Tradicinė taverna</td><td>~€8</td><td><a href="https://www.google.com/maps/search/?api=1&query=Taverna%20Tradicionale%20Kardhashi%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>3</td><td>Restorant Tradicional Urat</td><td>Gjirokastros senamiestis</td><td>Tradicinė taverna</td><td>~€8</td><td><a href="https://www.google.com/maps/search/?api=1&query=Restorant%20Tradicional%20Urat%2C%20Gjirokastra" target="_blank">Žemėlapyje</a></td></tr>
+      <tr><td>4</td><td>Bar Restorant Egnatia</td><td>Fier</td><td>Šeimos restoranas</td><td>~€9</td><td><a href="https://www.google.com/maps/search/?api=1&query=Bar%20Restorant%20Egnatia%2C%20Fier" target="_blank">Žemėlapyje</a></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Specialūs barai</h3>
+  <ul>
+    <li><strong>Komiteti – Kafe Muzeum</strong> (Tirana, 1 diena) – baras-muziejus komunistinės epochos interjere, 18 rūšių raki. <a href="https://www.google.com/maps/search/?api=1&query=Komiteti%20%E2%80%93%20Kafe%20Muzeum%2C%20Tirana" target="_blank">Žemėlapyje</a></li>
+  </ul>
+
+  <h2>Ką paragauti</h2>
+  <div class="grid-cards">
+    <div class="card dish-card">
+      <img src="images/jogurtin-riena-tav-kosi-e67a530d.jpg" alt="Tavë kosi">
+      <h3>Tavë kosi</h3>
+      <p>Albanijos nacionalinis patiekalas – ėriena, kepta su jogurto, kiaušinių ir sviesto užpilu.</p>
+      <p class="price">€6–9</p>
+      <p>Kur paragauti: Restorant Mangalemi, Kujtimi, Taverna Tradicionale Kardhashi</p>
+      <div class="credit">Nuotrauka: fugzu, CC BY 2.0 · <a href="https://commons.wikimedia.org/wiki/File:TAVE_KOSI-_agnello_allo_yogurt_albanese.jpg" target="_blank">šaltinis</a></div>
     </div>
-    <div class="route-buttons">
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&origin=41.327500,19.818700&destination=40.705800,19.952000&travelmode=driving&waypoints=40.705800,19.952000|40.620600,20.091800" target="_blank">🧭 Dienos maršrutas Google Maps</a>
+    <div class="card dish-card">
+      <img src="images/byrek-8d8a44fa.jpg" alt="Byrek">
+      <h3>Byrek</h3>
+      <p>Sluoksniuota tešla su sūrio, spinatų ar mėsos įdaru – populiariausias albanų užkandis.</p>
+      <p class="price">€1–3</p>
+      <p>Kur paragauti: Byrek Special „Luani“, Xheni Fast Food</p>
+      <div class="credit">Nuotrauka: RoyalHeritageAlb, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Albanian_triangle_byrek.jpg" target="_blank">šaltinis</a></div>
     </div>
-    <div class="timeline">
-
-      <div class="stop">
-        <span class="stop-time">Išvykimas 09:00</span>
-        <h3>Viešbutis Tiranos centre</h3>
-        <p class="notes">Ryto pradžia mieste – po pusryčių keliaukite tiesiai Berato kryptimi, kelias trunka apie 2 valandas. Automobilį iš nakties parkavimo atsiimkite laiku, kad išvengtumėte ryto spūsčių centre.</p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>124 km</b> · ~2 val. 1 min · asfaltuota SH4/SH3 pagrindinė trasa per Rrogozhinę–Lushnję į Beratą, daugiausia lyguma</span></div>
-
-      <div class="stop">
-        <span class="stop-time">11:10 – 11:20</span>
-        <h3>Berato pilis ir senamiestis (pirmas žvilgsnis)</h3>
-        <p class="notes">Trumpas stabtelėjimas pažvelgti į UNESCO senamiestį ir pilį iš apačios – pilnas apsilankymas laukia po pietų, grįžus iš kanjono.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.7058,19.9520" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/berato-pilis-ir-senamiestis-pirmas-vilgsnis-0076aa95.jpg" alt="Berato pilis ir senamiestis" loading="lazy">
-        </div>
-        <p class="credit">© Marcin Konsek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:2011_Berat,_Meczet_Kawaler%C3%B3w.JPG" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>23 km</b> · ~44 min · asfaltuotas SH72 kelias Berat–Osumo kanjonas, kalvotas ruožas prie kanjono</span></div>
-
-      <div class="stop">
-        <span class="stop-time">12:04 – 12:16</span>
-        <h3>Osumo kanjono apžvalgos aikštelė</h3>
-        <p class="notes">Įspūdingas kanjono vaizdas nuo aikštelės viršuje. Kelias iš Berato čia asfaltuotas, automobilį palikite aikštelėje – žemyn eina tik pėsčiųjų takas, avėkite patogią avalynę, gali būti šlapia. Grįžkite tuo pačiu asfaltuotu keliu (SH72) atgal į Beratą pietų.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.6206,20.0918" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/osumo-kanjono-ap-valgos-aik-tel-7c3ced10.jpg" alt="Osumo kanjonas" loading="lazy">
-        </div>
-        <p class="credit">© Pasztilla aka Attila Terbócs, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Osum_Canyon,_2016-07_01.jpg" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>23 km</b> · ~44 min · tas pats asfaltuotas SH72 kelias grįžtant į Beratą</span></div>
-
-      <div class="stop">
-        <span class="stop-time">13:00 – 14:00</span>
-        <h3>Pietūs Berato senamiestyje (restoranas „Homeri“, Mangalemas)</h3>
-        <p class="notes">Pietų pertrauka Mangalemo kvartale, netoli senamiesčio – vietinė virtuvė ir gražus vaizdas į upę bei pilies kalvą. Automobilį palikite apatinėje aikštelėje, senamiesčio gatvelės siauros ir netinkamos važiavimui.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.7058,19.9520" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/piet-s-berato-senamiestyje-restoranas-homeri-mangalemas-0076aa95.jpg" alt="Berato senamiestis" loading="lazy">
-        </div>
-        <p class="credit">© Marcin Konsek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:2011_Berat,_Meczet_Kawaler%C3%B3w.JPG" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="stop">
-        <span class="stop-time">14:00 – 08:15 (kitą rytą)</span>
-        <h3>Beratas – senamiestis ir pilis (nakvynė)</h3>
-        <p class="notes">Po pietų pasivaikščiokite po Mangalemo ir Goricos kvartalus, užlipkite iki pilies – saulei leidžiantis apie 16:30–17:00 vaizdas nuo Goricos tilto ypač gražus. Automobilį geriausia palikti apačioje, senamiesčio gatvelės siauros. Kitą rytą išvažiuokite anksti, apie 08:15 – kelias iki Gjirokastros kalnuotas ir ilgesnis, nei atrodo žemėlapyje.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.7058,19.9520" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/beratas-senamiestis-ir-pilis-nakvyn-0076aa95.jpg" alt="Beratas – senamiestis ir pilis" loading="lazy">
-        </div>
-        <p class="credit">© Marcin Konsek, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:2011_Berat,_Meczet_Kawaler%C3%B3w.JPG" target="_blank">šaltinis</a></p>
-      </div>
-
+    <div class="card dish-card">
+      <img src="images/f-rges-bd6c81b3.jpg" alt="Fërgesë">
+      <h3>Fërgesë</h3>
+      <p>Keptos paprikos ir pomidorai su varškės tipo sūriu – kreminis troškinys, dažnai patiekiamas kaip priedas.</p>
+      <p class="price">€3–6</p>
+      <p>Kur paragauti: Eni Traditional Food, Ballkoni Gorices, Restorant Tradicional Urat</p>
+      <div class="credit">Nuotrauka: Kj1595, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:F%C3%ABrges%C3%AB_dhe_Tav%C3%AB_me_oriz.jpg" target="_blank">šaltinis</a></div>
     </div>
-  </section>
-
-  <!-- ===================== DAY 3 ===================== -->
-  <section class="day-section">
-    <div class="day-header">
-      <h2>3 diena · lapkričio 1, sekmadienis</h2>
-      <div class="day-meta">Beratas → Gjirokastra · nakvynė: Gjirokastra · važiavimo laikas ~3 val. 31 min, 147 km</div>
+    <div class="card dish-card">
+      <img src="images/kepti-kotletai-qofte-f5305c7f.jpg" alt="Qofte">
+      <h3>Qofte</h3>
+      <p>Keptos mėsos kotletėlės su prieskoniais – klasikinis kasdienis patiekalas.</p>
+      <p class="price">€3–6</p>
+      <p>Kur paragauti: Xheni Fast Food, Kujtimi, Bar Restorant Egnatia</p>
+      <div class="credit">Nuotrauka: MirelaAndoni, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Qofte_sht%C3%ABpie_me_l%C3%ABng.jpg" target="_blank">šaltinis</a></div>
     </div>
-    <div class="route-buttons">
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&origin=40.705800,19.952000&destination=40.077800,20.138500&travelmode=driving&waypoints=40.075800,20.140100" target="_blank">🧭 Dienos maršrutas Google Maps</a>
+    <div class="card dish-card">
+      <h3>Sufllaqe</h3>
+      <p>Albaniškas kebabo tipo užkandis – kepta mėsa, daržovės ir padažas lavaše, greitas gatvės maistas.</p>
+      <p class="price">€2–3</p>
+      <p>Kur paragauti: Xheni Fast Food</p>
     </div>
-    <div class="timeline">
-
-      <div class="stop">
-        <span class="stop-time">Išvykimas 08:15</span>
-        <h3>Beratas</h3>
-        <p class="notes">Anksti ryte išvykstame Gjirokastros kryptimi – kelias per kalnus ilgesnis, nei rodo žemėlapis, tad neskubėkite ir stabtelėkite, jei norėsite pasigrožėti vaizdais.</p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>147 km</b> · ~3 val. 31 min · asfaltuota trunk/SH4–SH8 trasa per Fierį ir Tepelenę (Vjosos slėnio kalnų ruožas) – ne tiesioginis kelias per Përmetą</span></div>
-
-      <div class="stop">
-        <span class="stop-time">11:46 – 14:00</span>
-        <h3>Gjirokastros senasis bazaras – pietūs (Kujtimi)</h3>
-        <p class="notes">Atvykę turėsite laisvo laiko pasivaikščioti po akmenimis grįstą bazarą prieš pietus 13:00–14:00 tradiciniame restorane Kujtimi.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.0758,20.1401" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/gjirokastros-senasis-bazaras-piet-s-kujtimi-96a7c82a.jpg" alt="Gjirokastros senasis bazaras" loading="lazy">
-        </div>
-        <p class="credit">© Marcos Escudero Olano, CC BY-SA 2.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokast%C3%ABr_Mosque_-_Mosques_in_Albania.jpg" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="stop">
-        <span class="stop-time">14:15 – 17:00</span>
-        <h3>Gjirokastros pilis</h3>
-        <p class="notes">UNESCO senamiestis ir pilis su ginklų ekspozicija bei plačiu vaizdu į Drino slėnį. Kelias į pilį status – patogi avalynė pravers. Automobilį palikite prie senamiesčio apačioje esančiose aikštelėse.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.0778,20.1385" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/gjirokastros-pilis-418fb17a.jpg" alt="Gjirokastros pilis" loading="lazy">
-        </div>
-        <p class="credit">© Klein Muçi, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Gjirokastra_Castle_model.jpg" target="_blank">šaltinis</a></p>
-      </div>
-
+    <div class="card dish-card">
+      <img src="images/qifqi-87583b85.jpg" alt="Qifqi">
+      <h3>Qifqi</h3>
+      <p>Gjirokastros specialitetas – apkepti ryžių ir kiaušinių kukuliukai su mėtomis, kitur Albanijoje nerasite.</p>
+      <p class="price">€3–5</p>
+      <p>Kur paragauti: Kujtimi, Taverna Tradicionale Kardhashi, Restorant Tradicional Urat</p>
+      <div class="credit">Nuotrauka: G.Kanushi, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Qifqi_Gjirokaster_full_view_traditional.jpg" target="_blank">šaltinis</a></div>
     </div>
-  </section>
-
-  <!-- ===================== DAY 4 ===================== -->
-  <section class="day-section">
-    <div class="day-header">
-      <h2>4 diena · lapkričio 2, pirmadienis</h2>
-      <div class="day-meta">Gjirokastra → Tiranos oro uostas · grįžtamasis skrydis TIA→WAW 19:05 · važiavimo laikas ~3 val. 57 min, 212 km</div>
+    <div class="card dish-card">
+      <h3>Troftë e pjekur</h3>
+      <p>Šviežia upėtakio žuvis iš kalnų upių, kepta ant grilio su citrina ir žolelėmis – Berato apylinkių specialybė.</p>
+      <p class="price">€8–12</p>
+      <p>Kur paragauti: Restorant Mangalemi</p>
     </div>
-    <div class="route-buttons">
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&origin=40.077800,20.138500&destination=41.414700,19.720600&travelmode=driving&waypoints=40.723900,19.556100" target="_blank">🧭 Dienos maršrutas Google Maps</a>
-    </div>
-    <div class="timeline">
+  </div>
+</section>
 
-      <div class="stop">
-        <span class="stop-time">Išvykimas 09:00</span>
-        <h3>Gjirokastros pilis</h3>
-        <p class="notes">Paskutinis rytas Gjirokastroje – trumpai atsisveikinkite su pilimi ir senamiesčiu, tada išvykstame į Fjerį ir Tiranos oro uostą.</p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>105 km</b> · ~2 val. 17 min · asfaltuota trunk trasa per Tepelenę atgal į Fierį (Vjosos slėnio ruožas)</span></div>
-
-      <div class="stop">
-        <span class="stop-time">11:17 – 14:00</span>
-        <h3>Fier – pietų pertrauka</h3>
-        <p class="notes">Sustojimas pusiaukelėje į oro uostą – laisvo laiko ir pietūs 13:00–14:00 miesto centre prieš paskutinį važiavimo etapą.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=40.7239,19.5561" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/fier-piet-pertrauka-735bac2b.jpg" alt="Fier" loading="lazy">
-        </div>
-        <p class="credit">© RoyalHeritageAlb, CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Fier,_Albania.jpg" target="_blank">šaltinis</a></p>
-      </div>
-
-      <div class="leg-card"><span class="leg-icon">🚗</span> <span><b>107 km</b> · ~1 val. 40 min · asfaltuota SH4 pakrantės/lygumos trasa per Kavaję į oro uostą</span></div>
-
-      <div class="stop">
-        <span class="stop-time">15:45 – 19:05</span>
-        <h3>Tiranos oro uostas (TIA) – automobilio grąžinimas</h3>
-        <p class="notes">Ramiu tempu pravažiuokite pakrantės kelią iki oro uosto – jis ilgesnis, nei atrodo žemėlapyje. Su gera atsarga grąžinkite nuomos automobilį ir registruokitės skrydžiui TIA→WAW (19:05) – iki skrydžio liks daugiau nei 3 valandos, tad skubėti nereikės.</p>
-        <a class="gmaps-link" href="https://www.google.com/maps?q=41.4147,19.7206" target="_blank">📍 Žemėlapyje</a>
-        <div class="spot-thumb" onclick="openLightbox(this)">
-          <img src="images/tiranos-oro-uostas-tia-automobilio-gr-inimas-315e2710.jpg" alt="Tiranos oro uostas" loading="lazy">
-        </div>
-        <p class="credit">© albinfo, CC0 · <a href="https://commons.wikimedia.org/wiki/File:Tirana_Airport_Cargo_Center_(OSCAL19_trip).jpg" target="_blank">šaltinis</a></p>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 class="section-title">💶 Biudžeto sąmata (visai grupei, 4 žmonės)</h2>
-    <div class="budget-scroll">
-    <table class="budget">
-      <thead>
-        <tr><th>Kategorija</th><th class="num">Min</th><th class="num">Tikėtina</th><th class="num">Maks</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Skrydžiai (WAW/WMI ⇄ TIA, 4 keleiviai)</td><td class="num">€186</td><td class="num">€200</td><td class="num">€620</td></tr>
-        <tr><td>Registruotas bagažas</td><td class="num">€100</td><td class="num">€150</td><td class="num">€200</td></tr>
-        <tr><td>Automobilio nuoma (4 d., pilnas draudimas)</td><td class="num">€120</td><td class="num">€168</td><td class="num">€240</td></tr>
-        <tr><td>Kuras</td><td class="num">€65</td><td class="num">€85</td><td class="num">€110</td></tr>
-        <tr><td>Nakvynės (3 naktys, 2 kambariai)</td><td class="num">€178</td><td class="num">€270</td><td class="num">€410</td></tr>
-        <tr><td>Maistas</td><td class="num">€300</td><td class="num">€450</td><td class="num">€650</td></tr>
-        <tr><td>Įėjimo bilietai</td><td class="num">€20</td><td class="num">€35</td><td class="num">€60</td></tr>
-        <tr class="total"><td>Iš viso</td><td class="num">€969</td><td class="num">€1 358</td><td class="num">€2 290</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p class="budget-note">≈ €242 / €340 / €573 vienam žmogui. Skrydžių kainos yra bazinės (be registruoto bagažo) ir gali svyruoti iki išvykimo – verta rezervuoti skrydžius ir nakvynes iš anksto, likus 1–2 mėnesiams iki kelionės.</p>
-  </section>
+<!-- PRACTICAL -->
+<section id="practical">
+  <h2>Praktinė informacija</h2>
+  <div class="card practical">
+    <dl>
+      <dt>Skrydis į Albaniją</dt>
+      <dd>WAW → TIA, atvykimas apie 20:30 (spalio 30 d.)</dd>
+      <dt>Skrydis atgal</dt>
+      <dd>TIA → WAW, išvykimas 19:05 (lapkričio 2 d.)</dd>
+      <dt>Automobilio grąžinimas</dt>
+      <dd>Tiranos oro uoste, ne vėliau kaip ~17:00 lapkričio 2 d.</dd>
+      <dt>Grupės vadovas</dt>
+      <dd>[vardas, tel. nr.]</dd>
+      <dt>Nuomos įmonės kontaktas</dt>
+      <dd>[tel. nr. iš patvirtinimo laiško]</dd>
+      <dt>Nakvynių rezervacijos</dt>
+      <dd>[patvirtinimo numeriai / kontaktai]</dd>
+    </dl>
+  </div>
+</section>
 
 </main>
 
 <footer>
-  Albanija 2026 · Tirana – Beratas – Gjirokastra<br>
-  <!-- BUILD_TIME -->
+  Sukurta kelionei į Albaniją · <!-- BUILD_TIME -->
 </footer>
 
-<div id="lightbox" onclick="closeLightbox()">
-  <span class="lb-close" onclick="closeLightbox()">&times;</span>
+<div id="lightbox">
   <img id="lightbox-img" src="" alt="">
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   const DAY_COLORS = ["#e6194B", "#3cb44b", "#4363d9", "#f58231", "#911eb4", "#42d4f4"];
-
   const dayColor = (dayNumber) => DAY_COLORS[(dayNumber - 1) % DAY_COLORS.length];
 
   const stops = {
@@ -558,42 +637,42 @@
     boundsPadding: [30, 30]
   };
 
-  const map = L.map('map', { scrollWheelZoom: false }).setView(mapView.center, mapView.zoom);
+  const map = L.map('map');
+  if (mapView.bounds) {
+    map.fitBounds(mapView.bounds, { padding: mapView.boundsPadding || [20, 20] });
+  } else {
+    map.setView(mapView.center, mapView.zoom);
+  }
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19
   }).addTo(map);
 
   L.geoJSON(routes, {
-    style: (feature) => feature.properties.style || { color: feature.properties.color, weight: 3, dashArray: "6, 8" }
+    style: (feature) => feature.properties.style || { color: feature.properties.color, weight: 3 }
   }).addTo(map);
 
   L.geoJSON(stops, {
     pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
       radius: 7,
       fillColor: feature.properties.color,
-      color: "#fff",
+      color: '#fff',
       weight: 2,
-      fillOpacity: 0.95
-    }),
-    onEachFeature: (feature, layer) => {
-      const p = feature.properties;
-      layer.bindPopup(`<b>${p.name}</b><br>${p.day} diena<br><a href="${p.google_maps_url}" target="_blank">Atidaryti Google Maps</a>`);
-    }
+      fillOpacity: 1
+    }).bindPopup(`<strong>${feature.properties.name}</strong><br><a href="${feature.properties.google_maps_url}" target="_blank">Google Maps</a>`)
   }).addTo(map);
 
-  map.fitBounds(mapView.bounds, { padding: mapView.boundsPadding });
-
-  function openLightbox(el) {
-    const img = el.querySelector('img');
-    document.getElementById('lightbox-img').src = img.src;
-    document.getElementById('lightbox-img').alt = img.alt;
-    document.getElementById('lightbox').classList.add('open');
-  }
-  function closeLightbox() {
+  document.querySelectorAll('.spot-thumb').forEach(img => {
+    img.addEventListener('click', () => {
+      const overlay = document.getElementById('lightbox');
+      document.getElementById('lightbox-img').src = img.src;
+      overlay.classList.add('open');
+    });
+  });
+  document.getElementById('lightbox').addEventListener('click', () => {
     document.getElementById('lightbox').classList.remove('open');
-  }
+  });
 </script>
 
 </body>
