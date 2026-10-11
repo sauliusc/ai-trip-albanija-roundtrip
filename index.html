@@ -193,6 +193,15 @@
   .rating{color:#b6841c;font-weight:700;}
   .price-tag{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;font-size:.82rem;}
   .booking-link{display:inline-block;margin-top:8px;font-weight:600;}
+  .stay-card{margin-bottom:18px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+  .chip{background:var(--accent-light);color:var(--accent-dark);border-radius:14px;padding:4px 10px;font-size:.8rem;}
+  .stay-card details{margin-top:12px;background:#f4ede4;border-radius:8px;padding:10px 14px;}
+  .stay-card details summary{cursor:pointer;font-weight:600;color:var(--accent-dark);}
+  .stay-card details p{margin:8px 0 0;}
+  .photo-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;}
+  @media(min-width:600px){.photo-gallery{grid-template-columns:repeat(3,1fr);}}
+  .photo-gallery .spot-thumb{height:110px;}
   ul.tips-list{background:var(--card);border-radius:var(--radius);padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
   ul.tips-list li{margin-bottom:10px;}
   .practical-card{background:var(--card);border-radius:var(--radius);padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
@@ -235,15 +244,38 @@
 <section>
   <h2>🏠 Nakvynė</h2>
   <p>Visoms trims nakvynėms būstai jau užsakyti – žemiau svarbiausia informacija apie kiekvieną.</p>
-  <div class="company-grid">
-    <div class="company-card">
-      <h4>Hanna Apartment</h4>
-      <p><em>Tirana · spalio 30</em></p>
-      <p><span class="price-tag">51 €/naktis</span></p>
-      <p>2 miegamųjų, 2 vonios kambarių apartamentai su virtuve ir balkonu Tiranos centre, netoli Skanderbego aikštės – tinka vėlyvam (20:30) atvykimui ir 4 žmonių grupei. Parkavimas viešas, prie pastato (pageidautina rezervuoti iš anksto).</p>
-      <p>⚠️ Dėl vėlyvo įsiregistravimo (atvykimas 20:30) susitarkite su šeimininku iš anksto.</p>
-      <a class="booking-link" href="https://www.booking.com/hotel/al/apartament-tirana8.lt.html" target="_blank">Booking.com →</a>
+
+  <div class="company-card stay-card">
+    <h3 style="margin-top:0;">Hanna Apartment</h3>
+    <p><em>Tirana · spalio 30</em></p>
+    <p>Rruga e Elbasanit, 1035 Tirana, Albanija</p>
+    <p><span class="rating">⭐ 9,1/10</span> · 186 atsiliepimai</p>
+    <p><span class="price-tag">51 €/naktis</span></p>
+    <p>Hanna Apartment yra Tiranoje. Šiame apartamentų bute įrengtas oro kondicionierius ir nemokamas belaidis internetas.</p>
+    <div class="chips">
+      <span class="chip">Populiariausi patogumai</span>
+      <span class="chip">Automobilių stovėjimo aikštelė (vietoje)</span>
+      <span class="chip">Spartus nemokamas belaidis internetas (51 Mbps)</span>
+      <span class="chip">Numeriai šeimai</span>
+      <span class="chip">Numeriai nerūkantiems</span>
     </div>
+    <p>⚠️ Dėl vėlyvo įsiregistravimo (atvykimas 20:30) susitarkite su šeimininku iš anksto.</p>
+    <a class="booking-link" href="https://www.booking.com/hotel/al/apartament-tirana8.lt.html" target="_blank">Booking.com →</a>
+    <details>
+      <summary>Apartamentų aprašymas</summary>
+      <p>Hanna Apartment yra Tiranoje. Šiame apartamentų bute įrengtas oro kondicionierius ir nemokamas belaidis internetas. Vietoje galima pasistatyti automobilį, o apartamentai taip pat siūlo automobilio nuomos paslaugą svečiams, norintiems pasiekti apylinkes. Erdviame apartamentų bute su balkonu ir kalnų vaizdu yra 2 miegamieji, svetainė, plokščio ekrano televizorius, įrengta virtuvė su orkaite ir mikrobangų krosnele, bei 2 vonios kambariai su dušu. Apartamentai nerūkantiems ir garsui nelaidūs. Iki Tiranos Motinos Teresės tarptautinio oro uosto – 17 km.</p>
+    </details>
+    <div class="photo-gallery">
+      <img class="spot-thumb" src="images/stay-hanna-apartment-1.jpg" alt="Hanna Apartment">
+      <img class="spot-thumb" src="images/stay-hanna-apartment-2.jpg" alt="Hanna Apartment">
+      <img class="spot-thumb" src="images/stay-hanna-apartment-3.jpg" alt="Hanna Apartment">
+      <img class="spot-thumb" src="images/stay-hanna-apartment-4.jpg" alt="Hanna Apartment">
+      <img class="spot-thumb" src="images/stay-hanna-apartment-5.jpg" alt="Hanna Apartment">
+    </div>
+    <div class="photo-credit">Nuotraukos: Booking.com</div>
+  </div>
+
+  <div class="company-grid">
     <div class="company-card">
       <h4>DD Villa</h4>
       <p><em>Beratas · spalio 31</em></p>
@@ -298,10 +330,10 @@
   </div>
 
   <div class="eatery-mention">
-    🍽 <strong>Vakarienei – Bloku kvartalas</strong> (~10 min pėsčiomis): <strong>Qofte Tradita Met Kodra</strong> (qofte, ~5 €), <strong>Bule's Best Byrek in Town</strong> (byrek, ~2 €) arba pilnai vakarienei <strong>Restaurant Piceri Era "Blloku"</strong> (~13 €). Visos – vietinių pamėgtos, nebrangios, netoli nakvynės vietos.
+    🍽 <strong>Vakarienei – Bloku kvartalas</strong> (~10 min pėsčiomis): <strong>Oda – Traditional Albanian Restaurant</strong> (~12 € / asm.) arba <strong>Era Blloku</strong> (~10 € / asm.). Abi – vietinių pamėgtos, nebrangios, netoli nakvynės vietos.
   </div>
   <div class="bar-mention">
-    🍸 <strong>Vakaro baras: Komiteti Kafe-Bar</strong> – dienos metu kavinė-muziejus su ~17 000 komunistinio laikotarpio eksponatų, vakare virsta baru. Unikali, niekur kitur Albanijoje nepakartojama aplinka. <a href="https://www.google.com/maps/search/?api=1&query=Komiteti%20Kafe-Bar%2C%20Tirana" target="_blank">Žemėlapyje</a>
+    🍸 <strong>Vakaro baras: Komiteti – Kafe Muze</strong> – baras-muziejus buvusiose komunistų partijos komiteto patalpose, interjeras pilnas sovietmečio/komunistinio laikotarpio daiktų, o vizitinė kortelė – dešimtys naminės rakijos rūšių. <a href="https://www.google.com/maps/search/?api=1&query=Komiteti%20%E2%80%93%20Kafe%20Muze%2C%20Tirana" target="_blank">Žemėlapyje</a>
   </div>
 </section>
 
@@ -331,7 +363,6 @@
       <div class="photo-credit">Nuotrauka: QaifarShqiptari (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Kruj%C3%AB_castle_02.jpg" target="_blank">Wikimedia Commons</a></div>
     </div>
   </div>
-  <div class="eatery-mention">☕ Netoli pilies – <strong>Bar Restorant Alba</strong>, ramus šeimos restoranas su vaizdu į slėnį (~8 € / asm.), geras kavos ar greito užkandžio pasirinkimas tarp pilies ir bazaro.</div>
 
   <div class="leg"><span class="icon">🚗</span><span>101 km, apie 2 val. 1 min. – asfaltuotas kelias per Dumrės plynaukštę, viena trumpa duobėta, bet asfaltuota atkarpa prie Belšo.</span></div>
 
@@ -349,7 +380,7 @@
   <div class="stop">
     <span class="stop-time">13:19–14:19</span><span class="stop-name">Pietūs Berato senamiestyje</span>
     <p class="stop-notes">Pietų pertrauka Mangalemo kvartale, netoli senamiesčio – vietinė virtuvė ir gražus vaizdas į upę bei pilies kalvą. Automobilį palikite apatinėje aikštelėje, senamiesčio gatvelės siauros ir netinkamos važiavimui.</p>
-    <div class="eatery-mention">🍽 <strong>Restorant Mangalemi</strong> (~15 € / asm.) – 4,5/5 Tripadvisor, kasdien perkami švieži produktai, terasa su vaizdu į miestą; verta tavė kosi ir patlidžanų patiekalai.</div>
+    <div class="eatery-mention">🍽 <strong>Restorant Mangalemi</strong> (~10 € / asm.) – vienas geriausiai vertinamų Berate, vietinė kalnų ožkų sūrio ir jogurto virtuvė, tavë kosi, terasa su vaizdu į upę ir pilies kalvą.</div>
     <div class="spot-photo">
       <img class="spot-thumb" src="images/piet-s-berato-senamiestyje-restorant-mangalemi-0076aa95.jpg" alt="Berato senamiestis">
       <div class="photo-credit">Nuotrauka: Marcin Konsek (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:2011_Berat,_Meczet_Kawaler%C3%B3w.JPG" target="_blank">Wikimedia Commons</a></div>
@@ -383,7 +414,8 @@
   <div class="stop">
     <span class="stop-time">17:29 → kitos dienos 09:00</span><span class="stop-name">DD Villa (nakvynė)</span>
     <p class="stop-notes">Grįžkite į DD Villa, Rruga Antipatrea gatvėje Mangalemo kvartale, prie senamiesčio – vila su sodu ir restoranu/baru vietoje. Vakarienei čia pat arba netoliese, Mangalemo ar Goricos kvartaluose, daug vietinių užeigų. Kitą rytą po pusryčių keliaukite į Osumo kanjoną ir toliau per Vlorę į Llogaros perėją bei nakvynei pakrantėje.</p>
-    <div class="eatery-mention">🍽 <strong>Vakarienei – Eni Traditional Food</strong> (Goricos kvartalas, ~9 € / asm.) – mažas, šeimos valdomas restoranėlis prie Goricos tilto, greitas aptarnavimas, giriamas avies su jogurtu patiekalas.</div>
+    <div class="eatery-mention">🍽 <strong>Vakarienei – Homemade Food Lili</strong> (Mangalemo kvartalas, ~8 € / asm.) arba <strong>Eni Traditional Food</strong> (Goricos kvartalas, ~9 € / asm.) – mažos šeimos valdomos užeigos, visi patiekalai gaminami iš naujo.</div>
+    <div class="bar-mention">🍸 <strong>Guest House Iljesa baras</strong> – įsikūręs tiesiai Berato pilies tvirtovės sienų viduje, vakarinis gėrimas su panoraminiu vaizdu į Mangalemo ir Goricos kvartalus saulėlydžio metu. <a href="https://www.google.com/maps/search/?api=1&query=Guest%20House%20Iljesa%20baras%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
     <div class="spot-photo">
       <img class="spot-thumb" src="images/beratas-dd-villa-0076aa95.jpg" alt="Berato senamiestis">
       <div class="photo-credit">Nuotrauka: Marcin Konsek (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:2011_Berat,_Meczet_Kawaler%C3%B3w.JPG" target="_blank">Wikimedia Commons</a></div>
@@ -444,7 +476,7 @@
   <div class="stop">
     <span class="stop-time">13:00–14:00</span><span class="stop-name">Pietūs Vlorės/Radhimės pakrantėje</span>
     <p class="stop-notes">Pietūs paplūdimio restorane čia pat prie nakvynės vietos – vietiniai žuvies patiekalai su vaizdu į jūrą.</p>
-    <div class="eatery-mention">🍽 <strong>Laberia Restaurant</strong> (~14 € / asm.) – šviežia, tradiciškai ruošta žuvis ir namuose keptas byrek su jūros vaizdu, vietinių pamėgta vieta.</div>
+    <div class="eatery-mention">🍽 <strong>Laberia Restaurant</strong> (~15 € / asm.) – šviežia žuvis ir naminis byrek, kelios minutės nuo Hotel Liro, gera vieta pietums prie jūros.</div>
     <div class="spot-photo">
       <img class="spot-thumb" src="images/piet-s-vlor-s-radhim-s-pakrant-je-41054caf.jpg" alt="Radhimės pakrantė">
       <div class="photo-credit">Nuotrauka: Arianit (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Radhim%C3%AB_2.jpg" target="_blank">Wikimedia Commons</a></div>
@@ -454,7 +486,7 @@
   <div class="stop">
     <span class="stop-time">14:00 → kitos dienos 09:00</span><span class="stop-name">Hotel Liro – Adults Only (nakvynė)</span>
     <p class="stop-notes">Visą popietę ir vakarą galėsite atsipalaiduoti paplūdimyje prie pat Hotel Liro – nemokamas parkavimas vietoje, rezervuoti nereikia. Saulėlydis čia nuostabus. Viešbutis skirtas tik suaugusiems. Vakarienei pasivaikščiokite palei promenadą centriniame Vlorės rajone.</p>
-    <div class="eatery-mention">🍽 <strong>Vakarienei – Old Town Sofra e Muradies</strong> (Vlorės senamiestis, ~11 € / asm.) – laikoma geriausia tradicine albanų virtuve mieste, prie Muradie mečetės, namuose gaminti patiekalai.</div>
+    <div class="eatery-mention">🍽 <strong>Vakarienei – Baro Beach Fish Restaurant</strong> (~14 € / asm.) – aukščiausiai vertinamas žuvies restoranas Radhimėje, sąžiningos kainos, patogu nueinant pėsčiomis nuo viešbučio.</div>
     <div class="spot-photo">
       <img class="spot-thumb" src="images/vlor-radhim-pakrant-hotel-liro-490786cd.jpg" alt="Vlorės/Radhimės pakrantė">
       <div class="photo-credit">Nuotrauka: Tomasz Lewicki (CC BY-SA 2.0) · <a href="https://commons.wikimedia.org/wiki/File:Vlora_Panorama.jpg" target="_blank">Wikimedia Commons</a></div>
@@ -514,7 +546,7 @@
   <div class="stop">
     <span class="stop-time">13:00–14:00</span><span class="stop-name">Pietūs prie Karavastos parko įėjimo</span>
     <p class="stop-notes">Pietūs žuvies restorane čia pat prie parko įėjimo, prie lagūnos – vietiniai jūros gėrybių patiekalai ramioje aplinkoje.</p>
-    <div class="eatery-mention">🍽 <strong>Divjaka Fish Restaurant</strong> (~13 € / asm.) tiesiai iš lagūnos sugauta žuvis ir unguriai, arba alternatyva <strong>Pelikani Restorant</strong> (~12 € / asm.), jei pirmasis perpildytas.</div>
+    <div class="eatery-mention">🍽 <strong>Ali Kali</strong> (~12 € / asm.) – ilgametis vietinis žuvies restoranas tiesiai prie lagūnos kranto, arba alternatyva <strong>Skela e Pirgut</strong> (~13 € / asm.), jei pirmasis perpildytas.</div>
     <div class="spot-photo">
       <img class="spot-thumb" src="images/piet-s-prie-karavastos-parko-jimo-b17aa2f5.jpg" alt="Karavastos lagūna">
       <div class="photo-credit">Nuotrauka: Albinfo (CC BY 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Karavasta_lagoon_from_South_to_Divjaka_(OSCAL19_trip).jpg" target="_blank">Wikimedia Commons</a></div>
@@ -708,35 +740,39 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   <h3>1 diena · Tirana</h3>
   <div class="eatery-grid">
-    <div class="eatery-card"><strong>Qofte Tradita Met Kodra</strong><br><em>qoftinė, Bloku kvartalas</em><br>~5 € / asm.<br>Vietinių pamėgta, nebrangi qofte vieta pačiame Bloku kvartale, vos kelios minutės pėsčiomis nuo nakvynės.<br><a href="https://www.google.com/maps/search/?api=1&query=Qofte%20Tradita%20Met%20Kodra%2C%20Tirana" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Bule's Best Byrek in Town</strong><br><em>byrek krautuvėlė, Bloku kvartalas</em><br>~2 € / asm.<br>Puikiai įvertinta byrek krautuvėlė su įvairiais įdarais – tinka lengvai vakarienei ar užkandai prieš miegą.<br><a href="https://www.google.com/maps/search/?api=1&query=Bule%27s%20Best%20Byrek%20in%20Town%2C%20Tirana" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Restaurant Piceri Era "Blloku"</strong><br><em>šeimos taverna, Bloku kvartalas</em><br>~13 € / asm.<br>Autentiška albanų virtuvė įvairiems skoniams ir biudžetams, jei grupei norisi pilnos vakarienės.<br><a href="https://www.google.com/maps/search/?api=1&query=Restaurant%20Piceri%20Era%20%22Blloku%22%2C%20Tirana" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Oda – Traditional Albanian Restaurant</strong><br><em>tradicinis restoranas sename name, Bloku kvartalas</em><br>~12 € / asm.<br>Senas albanų namas prie Naujojo bazaro, vos kelios minutės pėsčiomis nuo Hanna Apartment – namų virtuvės patiekalai, kartais gyva tradicinė muzika.<br><a href="https://www.google.com/maps/search/?api=1&query=Oda%20%E2%80%93%20Traditional%20Albanian%20Restaurant%2C%20Tirana" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Era Blloku</strong><br><em>šeimyninis restoranas, Bloku kvartalas</em><br>~10 € / asm.<br>Populiarus tarp vietinių Bloku kvartale, gera vieta greitai ir skaniai vakarienei po vėlyvo atskridimo – qofte, byrek, gausios porcijos.<br><a href="https://www.google.com/maps/search/?api=1&query=Era%20Blloku%2C%20Tirana" target="_blank">Žemėlapyje</a></div>
   </div>
 
-  <h3>2 diena · Krujė ir Beratas</h3>
+  <h3>2 diena · Beratas</h3>
   <div class="eatery-grid">
-    <div class="eatery-card"><strong>Bar Restorant Alba</strong><br><em>šeimos taverna, prie Krujės pilies</em><br>~8 € / asm.<br>Du brolių vedamas, ramus restoranas su vaizdu į slėnį – geras greitas užkandis ar kava.<br><a href="https://www.google.com/maps/search/?api=1&query=Bar%20Restorant%20Alba%2C%20Kruj%C4%97" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Restorant Mangalemi</strong><br><em>šeimos taverna su terasa, Berato senamiestis</em><br>~15 € / asm.<br>4,5/5 Tripadvisor, švieži produktai iš turgaus, vaizdas į miestą.<br><a href="https://www.google.com/maps/search/?api=1&query=Restorant%20Mangalemi%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Eni Traditional Food</strong><br><em>šeimyninė virtuvė, Goricos kvartalas</em><br>~9 € / asm.<br>Mažas, vietinės šeimos valdomas restoranėlis prie Goricos tilto, greitas aptarnavimas, pigu ir skanu.<br><a href="https://www.google.com/maps/search/?api=1&query=Eni%20Traditional%20Food%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Restorant Mangalemi</strong><br><em>tradicinis restoranas, Berato senamiestis</em><br>~10 € / asm.<br>Vienas geriausiai vertinamų Berate – vietinė kalnų ožkų sūrio ir jogurto virtuvė, tavë kosi, terasa su vaizdu į upę ir pilies kalvą.<br><a href="https://www.google.com/maps/search/?api=1&query=Restorant%20Mangalemi%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Homemade Food Lili</strong><br><em>šeimyninė virtuvė, Mangalemo kvartalas</em><br>~8 € / asm.<br>Mažas šeimos valdomas restoranėlis Mangalemo kvartale, visi patiekalai gaminami iš naujo – tinka ramiai vakarienei grįžus į DD Villa.<br><a href="https://www.google.com/maps/search/?api=1&query=Homemade%20Food%20Lili%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Eni Traditional Food</strong><br><em>tradicinis restoranas, Goricos tiltas</em><br>~9 € / asm.<br>Prie Goricos tilto su vaizdu į upę ir pilį – klasikiniai albanų patiekalai, gera alternatyva vakarienei netoli nakvynės vietos.<br><a href="https://www.google.com/maps/search/?api=1&query=Eni%20Traditional%20Food%2C%20Beratas" target="_blank">Žemėlapyje</a></div>
   </div>
 
-  <h3>3 diena · Radhimė ir Vlorė</h3>
+  <h3>3 diena · Radhimė (Vlorė)</h3>
   <div class="eatery-grid">
-    <div class="eatery-card"><strong>Laberia Restaurant</strong><br><em>žuvies taverna, Radhimė</em><br>~14 € / asm.<br>Šviežia, tradiciškai ruošta žuvis ir namuose keptas byrek su jūros vaizdu.<br><a href="https://www.google.com/maps/search/?api=1&query=Laberia%20Restaurant%2C%20Radhim%C4%97" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Old Town Sofra e Muradies</strong><br><em>šeimos taverna, Vlorės senamiestis</em><br>~11 € / asm.<br>Laikoma geriausia tradicine albanų virtuve Vlorės senamiestyje prie Muradie mečetės.<br><a href="https://www.google.com/maps/search/?api=1&query=Old%20Town%20Sofra%20e%20Muradies%2C%20Vlor%C4%97" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Laberia Restaurant</strong><br><em>žuvies taverna, Hotel Liro</em><br>~15 € / asm.<br>Šviežia žuvis ir naminis byrek, kelios minutės nuo Hotel Liro – gera vieta pietums prie jūros.<br><a href="https://www.google.com/maps/search/?api=1&query=Laberia%20Restaurant%2C%20Radhim%C4%97%20%28Vlor%C4%97%29" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Baro Beach Fish Restaurant</strong><br><em>žuvies restoranas ant paplūdimio, Hotel Liro</em><br>~14 € / asm.<br>Aukščiausiai vertinamas žuvies restoranas Radhimėje, sąžiningos kainos – patogu vakarienei nueinant pėsčiomis nuo viešbučio.<br><a href="https://www.google.com/maps/search/?api=1&query=Baro%20Beach%20Fish%20Restaurant%2C%20Radhim%C4%97%20%28Vlor%C4%97%29" target="_blank">Žemėlapyje</a></div>
   </div>
 
-  <h3>4 diena · Divjakė / Karavasta</h3>
+  <h3>4 diena · Divjakė</h3>
   <div class="eatery-grid">
-    <div class="eatery-card"><strong>Divjaka Fish Restaurant</strong><br><em>žuvies restoranas prie lagūnos</em><br>~13 € / asm.<br>Įsikūręs miške prie pat lagūnos, siūlo tiesiai iš Karavastos lagūnos sugautą žuvį ir ungurius.<br><a href="https://www.google.com/maps/search/?api=1&query=Divjaka%20Fish%20Restaurant%2C%20Divjak%C4%97" target="_blank">Žemėlapyje</a></div>
-    <div class="eatery-card"><strong>Pelikani Restorant</strong><br><em>žuvies restoranas</em><br>~12 € / asm.<br>Šviežia žuvis ir jūros gėrybės, greitas aptarnavimas, rami aplinka – gera alternatyva.<br><a href="https://www.google.com/maps/search/?api=1&query=Pelikani%20Restorant%2C%20Divjak%C4%97" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Ali Kali</strong><br><em>žuvies restoranas prie lagūnos, Karavasta</em><br>~12 € / asm.<br>Ilgametis vietinis žuvies restoranas tiesiai prie lagūnos kranto – jūrašis, ešeriai, krevetės, žvejojami tą pačią dieną.<br><a href="https://www.google.com/maps/search/?api=1&query=Ali%20Kali%2C%20Divjak%C4%97" target="_blank">Žemėlapyje</a></div>
+    <div class="eatery-card"><strong>Skela e Pirgut</strong><br><em>žuvies restoranas prie lagūnos, Karavasta</em><br>~13 € / asm.<br>Vienas geriausiai vertinamų žuvies restoranų regione, šviežiai žvejota lagūnos žuvis – alternatyva pietums prieš grįžimą į oro uostą.<br><a href="https://www.google.com/maps/search/?api=1&query=Skela%20e%20Pirgut%2C%20Divjak%C4%97" target="_blank">Žemėlapyje</a></div>
   </div>
 
   <h3>🍸 Barai</h3>
+  <div class="bar-card" style="margin-bottom:12px;">
+    <strong>Komiteti – Kafe Muze</strong> (Tirana, 1 diena)<br>
+    Baras-muziejus buvusiose komunistų partijos komiteto patalpose – interjeras pilnas sovietmečio/komunistinio laikotarpio daiktų, o baro vizitinė kortelė – dešimtys naminės rakijos rūšių.<br>
+    <a href="https://www.google.com/maps/search/?api=1&query=Komiteti%20%E2%80%93%20Kafe%20Muze%2C%20Tirana" target="_blank">Žemėlapyje</a>
+  </div>
   <div class="bar-card">
-    <strong>Komiteti Kafe-Bar</strong> (Tirana, 1 diena)<br>
-    Dienos metu kavinė-muziejus su ~17 000 komunistinio laikotarpio eksponatų, vakare virsta baru – unikali, niekur kitur Albanijoje nepakartojama aplinka senais baldais ir artefaktais.<br>
-    <a href="https://www.google.com/maps/search/?api=1&query=Komiteti%20Kafe-Bar%2C%20Tirana" target="_blank">Žemėlapyje</a>
+    <strong>Guest House Iljesa baras</strong> (Beratas, 2 diena)<br>
+    Baras įsikūręs tiesiai Berato pilies tvirtovės sienų viduje – vakarinis gėrimas su panoraminiu vaizdu į Mangalemo ir Goricos kvartalus saulėlydžio metu.<br>
+    <a href="https://www.google.com/maps/search/?api=1&query=Guest%20House%20Iljesa%20baras%2C%20Beratas" target="_blank">Žemėlapyje</a>
   </div>
 </section>
 
@@ -745,47 +781,51 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <h2>😋 Ką paragauti</h2>
   <div class="dish-grid">
     <div class="dish-card">
-      <img src="images/tav-kosi-e67a530d.jpg" alt="Tavė kosi" style="border-radius:8px;margin-bottom:8px;">
+      <img src="images/tav-kosi-e67a530d.jpg" alt="Tavë kosi" style="border-radius:8px;margin-bottom:8px;">
       <div class="photo-credit">Nuotrauka: fugzu (CC BY 2.0) · <a href="https://commons.wikimedia.org/wiki/File:TAVE_KOSI-_agnello_allo_yogurt_albanese.jpg" target="_blank">Wikimedia Commons</a></div>
-      <h4>Tavė kosi (Tavë kosi)</h4>
-      <p>Albanijos nacionaliniu laikomas patiekalas – ėrienos ir ryžių troškinys, keptas moliniame inde su jogurto ir kiaušinių padažu.</p>
-      <p>💶 6–9 € · 📍 Snack Bar Derexhiku, Restorant Mangalemi</p>
+      <h4>Tavë kosi</h4>
+      <p>Albanijos nacionalinis patiekalas – orkaitėje kepta ėriena su jogurto ir kiaušinių padažu, viršuje traškiai paskrudinta.</p>
+      <p>💶 6–9 € · 📍 Oda – Traditional Albanian Restaurant, Restorant Mangalemi</p>
     </div>
     <div class="dish-card">
       <img src="images/byrekas-3e68fcec.jpg" alt="Byrek" style="border-radius:8px;margin-bottom:8px;">
       <div class="photo-credit">Nuotrauka: Myalbanianfood (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Albanian_Meat_Pie_-_Mish_me_Byrek.jpg" target="_blank">Wikimedia Commons</a></div>
-      <h4>Byrek</h4>
-      <p>Plonytės tešlos pyragas, sluoksniuotas ir keptas, su įdaru iš sūrio, špinatų, mėsos ar moliūgo – klasikinis albaniškas užkandis bet kuriuo paros metu.</p>
-      <p>💶 1–3 € · 📍 Snack Bar Derexhiku, Era Bloku</p>
+      <h4>Byrekas</h4>
+      <p>Sluoksniuotos tešlos pyragaitis su sūrio, špinatų ar mėsos įdaru – populiarus pusryčiams ar užkandai.</p>
+      <p>💶 2–4 € · 📍 Era Blloku, Homemade Food Lili, Laberia Restaurant</p>
     </div>
     <div class="dish-card">
-      <img src="images/oft-f5305c7f.jpg" alt="Qofte" style="border-radius:8px;margin-bottom:8px;">
+      <img src="images/oft-f5305c7f.jpg" alt="Čoftė" style="border-radius:8px;margin-bottom:8px;">
       <div class="photo-credit">Nuotrauka: MirelaAndoni (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Qofte_sht%C3%ABpie_me_l%C3%ABng.jpg" target="_blank">Wikimedia Commons</a></div>
-      <h4>Qofte</h4>
-      <p>Keptos ar keptos ant grotelių kapotos mėsos kukulės su prieskoniais, dažniausiai patiekiamos su jogurtu ar šviežia salota.</p>
-      <p>💶 5–8 € · 📍 Tek Zgara Tironës, Era Bloku</p>
+      <h4>Čoftė</h4>
+      <p>Grilioti pagardinti maltos mėsos kukuliai su daržovėmis ir jogurto padažu.</p>
+      <p>💶 4–7 € · 📍 Era Blloku, Oda – Traditional Albanian Restaurant</p>
     </div>
     <div class="dish-card">
-      <img src="images/ferges-cee2e747.jpg" alt="Fërgesë" style="border-radius:8px;margin-bottom:8px;">
+      <img src="images/ferges-cee2e747.jpg" alt="Fërgesė" style="border-radius:8px;margin-bottom:8px;">
       <div class="photo-credit">Nuotrauka: Marcos Escudero Olano (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Fergese-albanian-dish.jpg" target="_blank">Wikimedia Commons</a></div>
-      <h4>Fërgesë</h4>
-      <p>Troškinti pipirai, pomidorai ir varškė ar feta, kartais su vištienos kepenėlėmis – tirštas, sotus užkandis su duona.</p>
-      <p>💶 5–7 € · 📍 Restorant Mangalemi, Ballkoni Gorices</p>
+      <h4>Fergesė</h4>
+      <p>Troškinti paprikos, pomidorai ir varškė/sūris – tradicinis Berato regiono užkandis ar garnyras.</p>
+      <p>💶 5–8 € · 📍 Restorant Mangalemi, Eni Traditional Food</p>
     </div>
     <div class="dish-card">
-      <h4>Karavastos ungurys (Ngjalë)</h4>
-      <p>Karavastos lagūnoje gaudomas ungurys, keptas ant grotelių arba troškintas – rudenį, ypač lapkritį, laikomas geriausio skonio sezonu.</p>
-      <p>💶 10–15 € · 📍 Skela e Pirgut</p>
+      <h4>Grilioti žuvis</h4>
+      <p>Šviežia Adrijos jūros žuvis (dorada, ešerys), gyvai grilioti ir patiekiami su citrina ir alyvuogių aliejumi.</p>
+      <p>💶 10–18 € · 📍 Laberia Restaurant, Baro Beach Fish Restaurant, Ali Kali</p>
     </div>
     <div class="dish-card">
-      <h4>Žuvis ant grotelių (Peshk në skarë)</h4>
-      <p>Šviežiai sugauta Adrijos jūros žuvis, kepta ant grotelių su alyvuogių aliejumi ir citrina – pakrantės restoranų pagrindas.</p>
-      <p>💶 10–18 € · 📍 Baro Beach Fish Restaurant, Miramare Restaurant</p>
+      <img src="images/midijos-8e5094a5.jpg" alt="Midijos" style="border-radius:8px;margin-bottom:8px;">
+      <div class="photo-credit">Nuotrauka: Wilson44691 at English Wikipedia (Public domain) · <a href="https://commons.wikimedia.org/wiki/File:CornishMussels.JPG" target="_blank">Wikimedia Commons</a></div>
+      <h4>Midijos</h4>
+      <p>Vlorės ir Narto lagūnos ruošiamos midijos, troškintos su pomidorais, česnaku ir baltu vynu.</p>
+      <p>💶 6–10 € · 📍 Laberia Restaurant, Baro Beach Fish Restaurant</p>
     </div>
     <div class="dish-card">
-      <h4>Trileçe</h4>
-      <p>Minkštas pienu permirkytas biskvitinis pyragas – populiarus Balkanų regiono desertas, kurį rasite daugelyje albaniškų taverų.</p>
-      <p>💶 2–4 € · 📍 Era Bloku, Ballkoni Gorices</p>
+      <img src="images/baklava-369fa7ed.jpg" alt="Baklava" style="border-radius:8px;margin-bottom:8px;">
+      <div class="photo-credit">Nuotrauka: CukoEni (CC BY-SA 4.0) · <a href="https://commons.wikimedia.org/wiki/File:Traditional_baklava_from_Eni.jpg" target="_blank">Wikimedia Commons</a></div>
+      <h4>Baklava</h4>
+      <p>Sluoksniuota tešla su riešutais ir medaus sirupu – populiariausias albanų desertas.</p>
+      <p>💶 2–4 € · 📍 Oda – Traditional Albanian Restaurant, Eni Traditional Food</p>
     </div>
   </div>
 </section>
